@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+:root {
+  --background: #03040b;
+  --foreground: #eff9ff;
+  --primary: #00e5ff;
+  --secondary: #6e44ff;
+  --accent: #ff4d9d;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-space-grotesk);
+  --font-mono: var(--font-sora);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-space-grotesk), sans-serif;
+  overflow-x: hidden;
+}
+
+/* Desktop renders at the equivalent of ~115% browser zoom by default. */
+@media (min-width: 1024px) {
+  body {
+    zoom: 1.15;
+  }
+}
+
+/* Attached to html so it stays outside the zoomed body and hugs the real viewport. */
+html::after {
+  content: "";
+  position: fixed;
+  inset: 10px;
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  border-radius: 28px;
+  pointer-events: none;
+  z-index: 70;
+  animation: frame-glow 4.5s ease-in-out infinite;
+}
+
+@keyframes frame-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 18px rgba(0, 229, 255, 0.18),
+      inset 0 0 22px rgba(0, 229, 255, 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 34px rgba(0, 229, 255, 0.34),
+      inset 0 0 40px rgba(110, 68, 255, 0.16);
+  }
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 229, 255, 0.5) rgba(255, 255, 255, 0.08);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--primary), var(--accent));
+  border-radius: 999px;
+}
+
+::selection {
+  background: rgba(0, 229, 255, 0.3);
+  color: white;
+}
