@@ -30,26 +30,34 @@ function FloatingNav() {
   useEffect(() => {
     const visualViewport = window.visualViewport;
     const mobileViewport = window.matchMedia(
-      "(pointer: coarse) and (hover: none), (max-width: 767px), (max-width: 900px) and (max-height: 500px)",
+      "(pointer: coarse) and (hover: none), (max-width: 767px), (max-width: 1200px) and (max-height: 500px)",
     );
+    const isCompactViewport = () => {
+      const visibleWidth = visualViewport?.width ?? document.documentElement.clientWidth;
+      const visibleHeight = visualViewport?.height ?? window.innerHeight;
+      return mobileViewport.matches || visibleWidth < 768 || (visibleWidth <= 1200 && visibleHeight <= 500);
+    };
     let previousVisibleWidth = Number.NaN;
     let previousVisibleLeft = Number.NaN;
 
     const updatePosition = () => {
       const nav = navRef.current;
       if (!nav) return;
+      const visibleWidth = visualViewport?.width ?? document.documentElement.clientWidth;
+      const visibleLeft = visualViewport?.offsetLeft ?? 0;
+      const compactViewport = isCompactViewport();
+      document.documentElement.dataset.mobileFrame = String(compactViewport);
+      nav.dataset.compactViewport = String(visibleWidth < 640);
 
-      if (mobileViewport.matches) {
-        nav.style.removeProperty("left");
-        nav.style.removeProperty("width");
-        nav.style.removeProperty("top");
+      if (compactViewport) {
+        nav.style.left = "20px";
+        nav.style.width = `${Math.max(0, window.innerWidth - 40)}px`;
+        nav.style.top = `${window.innerHeight - nav.offsetHeight - 20}px`;
         previousVisibleWidth = Number.NaN;
         previousVisibleLeft = Number.NaN;
         return;
       }
 
-      const visibleWidth = visualViewport?.width ?? document.documentElement.clientWidth;
-      const visibleLeft = visualViewport?.offsetLeft ?? 0;
       if (visibleWidth === previousVisibleWidth && visibleLeft === previousVisibleLeft) return;
 
       previousVisibleWidth = visibleWidth;
@@ -66,22 +74,41 @@ function FloatingNav() {
     };
 
     const updateMobileViewport = () => {
-      if (!mobileViewport.matches) return;
+      const compactViewport = isCompactViewport();
+      document.documentElement.dataset.mobileFrame = String(compactViewport);
+      if (!compactViewport) return;
 
       const viewportLeft = visualViewport?.offsetLeft ?? 0;
       const viewportTop = visualViewport?.offsetTop ?? 0;
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
+      const viewportWidth = visualViewport?.width ?? window.innerWidth;
+      const viewportHeight = visualViewport?.height ?? window.innerHeight;
       const root = document.documentElement.style;
 
-      root.setProperty("--mobile-frame-left", "12px");
-      root.setProperty("--mobile-frame-top", "12px");
-      root.setProperty("--mobile-frame-width", `${Math.max(0, viewportWidth - 24)}px`);
-      root.setProperty("--mobile-frame-height", `${Math.max(0, viewportHeight - 24)}px`);
       root.setProperty("--mobile-viewport-left", `${viewportLeft}px`);
       root.setProperty("--mobile-viewport-top", `${viewportTop}px`);
       root.setProperty("--mobile-viewport-width", `${viewportWidth}px`);
       root.setProperty("--mobile-viewport-height", `${viewportHeight}px`);
+    };
+
+    let viewportUpdateRequest = 0;
+    const scheduleMobileViewportUpdate = () => {
+      if (!isCompactViewport()) return;
+      if (document.visibilityState === "hidden") {
+        if (viewportUpdateRequest) window.cancelAnimationFrame(viewportUpdateRequest);
+        viewportUpdateRequest = 0;
+        updateMobileViewport();
+        return;
+      }
+      if (viewportUpdateRequest) return;
+      viewportUpdateRequest = window.requestAnimationFrame(() => {
+        viewportUpdateRequest = 0;
+        updateMobileViewport();
+      });
+    };
+    const updateOnVisibilityChange = () => {
+      if (viewportUpdateRequest) window.cancelAnimationFrame(viewportUpdateRequest);
+      viewportUpdateRequest = 0;
+      scheduleMobileViewportUpdate();
     };
 
     const currentOrientation = () => window.innerWidth >= window.innerHeight ? "landscape" : "portrait";
@@ -91,24 +118,32 @@ function FloatingNav() {
       if (nextOrientation === previousOrientation) return;
 
       previousOrientation = nextOrientation;
-      window.requestAnimationFrame(updateMobileViewport);
+      scheduleMobileViewportUpdate();
     };
     const updateResponsivePosition = () => {
       updatePosition();
       updateAfterOrientationChange();
+      scheduleMobileViewportUpdate();
     };
 
     updatePosition();
     updateMobileViewport();
     window.addEventListener("resize", updateResponsivePosition);
+    window.addEventListener("scroll", scheduleMobileViewportUpdate, { passive: true });
     window.addEventListener("orientationchange", updateAfterOrientationChange);
+    document.addEventListener("visibilitychange", updateOnVisibilityChange);
     visualViewport?.addEventListener("resize", updateResponsivePosition);
+    visualViewport?.addEventListener("scroll", updateResponsivePosition);
     mobileViewport.addEventListener("change", updateResponsivePosition);
 
     return () => {
+      window.cancelAnimationFrame(viewportUpdateRequest);
       window.removeEventListener("resize", updateResponsivePosition);
+      window.removeEventListener("scroll", scheduleMobileViewportUpdate);
       window.removeEventListener("orientationchange", updateAfterOrientationChange);
+      document.removeEventListener("visibilitychange", updateOnVisibilityChange);
       visualViewport?.removeEventListener("resize", updateResponsivePosition);
+      visualViewport?.removeEventListener("scroll", updateResponsivePosition);
       mobileViewport.removeEventListener("change", updateResponsivePosition);
     };
   }, [portalHost]);
@@ -286,7 +321,7 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
             exit={{ opacity: 0, transition: { duration: 0.65 } }}
           >
             <motion.p
-              className="text-xs tracking-[0.65em] text-cyan-300"
+              className="whitespace-nowrap text-xs tracking-[0.65em] text-cyan-300 max-sm:text-[8px] max-sm:tracking-[0.14em]"
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7 }}
