@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState, type ChangeEvent, type FormEvent } from "react";
-import { springCardVariants, springTransition, springViewport } from "@/components/portfolio/spring-reveal";
+import { springCardVariants, springTransition, springViewport, useScrollDirection } from "@/components/portfolio/spring-reveal";
 import { portfolioData } from "@/data/portfolio-data";
 import { MagneticButton } from "@/components/portfolio/magnetic-button";
 
@@ -27,6 +27,7 @@ const contactFields = [
 ];
 
 export function ContactSection() {
+  const scrollDirection = useScrollDirection();
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [status, setStatus] = useState<"idle" | "error" | "sent" | "copied">("idle");
 
@@ -90,11 +91,13 @@ export function ContactSection() {
             <motion.div
               key={label}
               variants={springCardVariants}
+              custom={scrollDirection}
+              animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
               whileInView="animate"
               viewport={springViewport}
               transition={{ ...springTransition, delay: i * 0.07 }}
               whileHover={{ y: -2, x: 4 }}
-              className="rounded-2xl border border-white/12 bg-white/10 p-4 backdrop-blur-xl transition-all"
+              className="rounded-2xl border border-white/12 bg-white/10 p-4 backdrop-blur-xl"
             >
               <p className="text-[10px] font-bold tracking-[0.4em] text-cyan-300/80">{label}</p>
               {href ? (
@@ -126,7 +129,9 @@ export function ContactSection() {
         {/* Contact form */}
         <motion.div
           variants={springCardVariants}
+          custom={scrollDirection}
           initial="initial"
+          animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
           whileInView="animate"
           viewport={springViewport}
           style={{ perspective: 1000 }}

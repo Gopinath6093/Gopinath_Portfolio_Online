@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { springCardVariants, springTransition, springViewport } from "@/components/portfolio/spring-reveal";
+import { springCardVariants, springTransition, springViewport, useScrollDirection } from "@/components/portfolio/spring-reveal";
 import { portfolioData } from "@/data/portfolio-data";
 
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -23,16 +23,20 @@ function ProjectCard({
   project: (typeof portfolioData.projects)[0];
   index: number;
 }) {
+  const scrollDirection = useScrollDirection();
+
   return (
     <motion.article
       variants={springCardVariants}
+      custom={scrollDirection}
       initial="initial"
+      animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
       whileInView="animate"
       viewport={springViewport}
       transition={{ ...springTransition, delay: index * 0.1 }}
       whileHover={{ y: -5 }}
       style={{ perspective: 1000 }}
-      className="group overflow-hidden rounded-[1.8rem] border border-white/15 bg-black/40 backdrop-blur-xl transition-all hover:border-pink-300/30"
+      className="group overflow-hidden rounded-[1.8rem] border border-white/15 bg-black/40 backdrop-blur-xl hover:border-pink-300/30"
     >
       <div className="relative h-52 overflow-hidden">
         <Image

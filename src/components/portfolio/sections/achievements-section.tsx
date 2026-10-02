@@ -2,7 +2,7 @@
 
 import { animate, motion, useInView } from "framer-motion";
 import { useEffect, useRef } from "react";
-import { springCardVariants, springTransition, springViewport } from "@/components/portfolio/spring-reveal";
+import { springCardVariants, springTransition, springViewport, useScrollDirection } from "@/components/portfolio/spring-reveal";
 import { portfolioData } from "@/data/portfolio-data";
 
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -45,6 +45,8 @@ function AnimatedCounter({ value }: { value: string }) {
 }
 
 export function AchievementsSection() {
+  const scrollDirection = useScrollDirection();
+
   return (
     <div className="mx-auto w-[min(1100px,92vw)]">
       <motion.div
@@ -73,7 +75,9 @@ export function AchievementsSection() {
           <motion.div
             key={kpi.label}
             variants={springCardVariants}
+            custom={scrollDirection}
             initial="initial"
+            animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
             whileInView="animate"
             viewport={springViewport}
             transition={{ ...springTransition, delay: i * 0.08 }}
@@ -95,13 +99,15 @@ export function AchievementsSection() {
           <motion.article
             key={achievement}
             variants={springCardVariants}
+            custom={scrollDirection}
             initial="initial"
+            animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
             whileInView="animate"
             viewport={springViewport}
             transition={{ ...springTransition, delay: i * 0.08 }}
             whileHover={{ y: -3, boxShadow: "0 14px 40px rgba(255,200,50,0.1)" }}
             style={{ perspective: 1000 }}
-            className="flex items-center gap-4 rounded-2xl border border-amber-200/20 bg-gradient-to-r from-amber-400/10 to-black/20 p-5 backdrop-blur-xl transition-all"
+            className="flex items-center gap-4 rounded-2xl border border-amber-200/20 bg-gradient-to-r from-amber-400/10 to-black/20 p-5 backdrop-blur-xl"
           >
             <motion.span
               animate={{ rotate: [0, 8, -8, 0] }}
@@ -121,7 +127,9 @@ export function AchievementsSection() {
           <motion.article
             key={t.author}
             variants={springCardVariants}
+            custom={scrollDirection}
             initial="initial"
+            animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
             whileInView="animate"
             viewport={springViewport}
             transition={{ ...springTransition, delay: i * 0.08 }}

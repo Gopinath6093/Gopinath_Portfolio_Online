@@ -1,30 +1,75 @@
 "use client";
 
 import { motion, type Transition, type Variants } from "framer-motion";
-import type { ReactNode } from "react";
+import { useSyncExternalStore, type ReactNode } from "react";
+
+export type ScrollDirection = "up" | "down";
+
+let scrollDirection: ScrollDirection = "down";
+const directionListeners = new Set<() => void>();
+
+export function setScrollDirection(direction: ScrollDirection) {
+  if (scrollDirection === direction) return;
+  scrollDirection = direction;
+  directionListeners.forEach((listener) => listener());
+}
+
+function subscribeToScrollDirection(listener: () => void) {
+  directionListeners.add(listener);
+  return () => directionListeners.delete(listener);
+}
+
+function getScrollDirection() {
+  return scrollDirection;
+}
+
+export function useScrollDirection() {
+  return useSyncExternalStore(
+    subscribeToScrollDirection,
+    getScrollDirection,
+    () => "down",
+  );
+}
 
 export const springTransition: Transition = {
-  type: "spring",
-  stiffness: 190,
-  damping: 20,
-  mass: 0.9,
+  type: "tween",
+  duration: 1.15,
+  ease: [0.16, 1, 0.3, 1],
 };
 
-/** Cards reveal once and stay visible, with a low threshold so fast scrolling still triggers them. */
+/** A low threshold keeps reveals responsive during fast scrolling; leaving view resets them. */
 export const springViewport = {
-  once: true,
-  amount: 0.05,
-  margin: "0px 0px -5% 0px",
+  once: false,
+  amount: 0.01,
 } as const;
 
+const sectionInitial = (direction: ScrollDirection) => ({
+  opacity: 0,
+  y: direction === "up" ? -90 : 90,
+  scale: 0.96,
+  rotateX: direction === "up" ? -6 : 6,
+});
+
 export const springSectionVariants: Variants = {
-  initial: { opacity: 0, y: 120, scale: 0.9, rotateX: 10 },
-  animate: { opacity: 1, y: 0, scale: 1, rotateX: 0, transition: springTransition },
+  initial: (direction: ScrollDirection = "down") => sectionInitial(direction),
+  initialUp: { ...sectionInitial("up"), transition: { duration: 0 } },
+  initialDown: { ...sectionInitial("down"), transition: { duration: 0 } },
+  animate: { opacity: 1, x: 0, y: 0, scale: 1, rotateX: 0, rotateY: 0, transition: springTransition },
 };
 
+const cardInitial = (direction: ScrollDirection) => ({
+  opacity: 0,
+  x: direction === "up" ? 64 : -64,
+  y: 20,
+  scale: 0.96,
+  rotateY: direction === "up" ? -6 : 6,
+});
+
 export const springCardVariants: Variants = {
-  initial: { opacity: 0, y: 60, scale: 0.86, rotateX: 12 },
-  animate: { opacity: 1, y: 0, scale: 1, rotateX: 0, transition: springTransition },
+  initial: (direction: ScrollDirection = "down") => cardInitial(direction),
+  initialUp: { ...cardInitial("up"), transition: { duration: 0 } },
+  initialDown: { ...cardInitial("down"), transition: { duration: 0 } },
+  animate: { opacity: 1, x: 0, y: 0, scale: 1, rotateX: 0, rotateY: 0, transition: springTransition },
 };
 
 /** Card wrapper that springs into place each time it scrolls into view. */
@@ -37,10 +82,14 @@ export function SpringCard({
   index?: number;
   className?: string;
 }) {
+  const direction = useScrollDirection();
+
   return (
     <motion.div
       variants={springCardVariants}
+      custom={direction}
       initial="initial"
+      animate={direction === "up" ? "initialUp" : "initialDown"}
       whileInView="animate"
       viewport={springViewport}
       transition={{ ...springTransition, delay: index * 0.08 }}

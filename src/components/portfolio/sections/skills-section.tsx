@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { springCardVariants, springTransition, springViewport } from "@/components/portfolio/spring-reveal";
+import { springCardVariants, springTransition, springViewport, useScrollDirection } from "@/components/portfolio/spring-reveal";
 import { portfolioData } from "@/data/portfolio-data";
 
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -42,19 +42,22 @@ function SkillCluster({
   cluster: (typeof portfolioData.skillClusters)[0];
   index: number;
 }) {
+  const scrollDirection = useScrollDirection();
   const gradient = domainColors[cluster.domain] ?? "from-white/10 to-white/2";
   const border = domainBorder[cluster.domain] ?? "border-white/15";
 
   return (
     <motion.article
       variants={springCardVariants}
+      custom={scrollDirection}
       initial="initial"
+      animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
       whileInView="animate"
       viewport={springViewport}
       transition={{ ...springTransition, delay: index * 0.06 }}
       whileHover={{ y: -4, scale: 1.02 }}
       style={{ perspective: 1000 }}
-      className={`rounded-[1.6rem] border bg-gradient-to-b p-5 backdrop-blur-xl transition-all ${gradient} ${border}`}
+      className={`rounded-[1.6rem] border bg-gradient-to-b p-5 backdrop-blur-xl ${gradient} ${border}`}
     >
       <h3 className="text-[11px] font-bold tracking-[0.28em] text-cyan-100/90 uppercase">
         {cluster.domain}
@@ -75,6 +78,8 @@ function SkillCluster({
 }
 
 export function SkillsSection() {
+  const scrollDirection = useScrollDirection();
+
   return (
     <div className="mx-auto w-[min(1100px,92vw)]">
       <motion.div
@@ -93,7 +98,7 @@ export function SkillsSection() {
           Neural Constellation
         </motion.h1>
         <motion.p variants={item} className="mt-3 max-w-xl text-sm text-cyan-100/75">
-          Seven domains of expertise — each node connected to a larger system of quality and impact.
+          Eight domains of expertise — each node connected to a larger system of quality and impact.
         </motion.p>
       </motion.div>
 
@@ -105,7 +110,9 @@ export function SkillsSection() {
         {/* Central connector card */}
         <motion.div
           variants={springCardVariants}
+          custom={scrollDirection}
           initial="initial"
+          animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
           whileInView="animate"
           viewport={springViewport}
           className="col-span-full rounded-[1.6rem] border border-white/12 bg-gradient-to-r from-cyan-400/10 via-fuchsia-400/10 to-cyan-400/10 p-6 text-center backdrop-blur-xl"

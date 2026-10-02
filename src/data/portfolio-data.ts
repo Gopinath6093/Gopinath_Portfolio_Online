@@ -93,7 +93,7 @@ export const portfolioData = {
       period: "2024 - 2026",
       highlights: [
         "Focused on Cloud Computing and Blockchain fundamentals.",
-        "Built projects related to Cloud and Blockchain.",
+        "Built projects related to Blockchain based Counterfeit Product Verification System.",
       ],
     },
     {
@@ -102,7 +102,16 @@ export const portfolioData = {
       period: "2019 - 2023",
       highlights: [
         "Focused on Information Technology and Software Engineering.",
-        "Built projects related to AI based Attendance System",
+        "Built projects related to AI based Attendance Registration System",
+      ],
+    },
+    {
+      institution: "Tagore Matric Hr Sec School",
+      degree: "HSC +2",
+      period: "2018 - 2019",
+      highlights: [
+        "Focused on Computer Science and Mathematics group.",
+        "Highly active and interested in CS and Language papers scored more than 95% on each.",
       ],
     },
   ] as EducationItem[],
@@ -153,7 +162,7 @@ export const portfolioData = {
       solution: "Implemented a blockchain-based verification system to ensure product authenticity and originality.",
       impact: "Reduced fraud and improved efficiency by hybrid blockchain in product verification.",
       tools: ["Python", "Solidity", "RemixIDE"],
-      image: "/images/scene-01.jpg",
+      image: "/images/M.Tech_Project.jpg",
     },
     {
       name: "Facial Attendance Using Artificial Intelligence",
@@ -161,7 +170,7 @@ export const portfolioData = {
       solution: "Developed an AI-based facial recognition system for automated attendance.",
       impact: "Reduced attendance tracking time and improved accuracy.",
       tools: ["Python", "OpenCV", "Machine Learning"],
-      image: "/images/scene-02.jpg",
+      image: "/images/B.Tech_Project.webp",
     },
   ] as ProjectItem[],
   testimonials: [

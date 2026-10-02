@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { springCardVariants, springTransition, springViewport } from "@/components/portfolio/spring-reveal";
+import { springCardVariants, springTransition, springViewport, useScrollDirection } from "@/components/portfolio/spring-reveal";
 import { portfolioData } from "@/data/portfolio-data";
 
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -22,10 +22,14 @@ function EducationNode({
   edu: (typeof portfolioData.education)[0];
   index: number;
 }) {
+  const scrollDirection = useScrollDirection();
+
   return (
     <motion.article
       variants={springCardVariants}
+      custom={scrollDirection}
       initial="initial"
+      animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
       whileInView="animate"
       viewport={springViewport}
       transition={{ ...springTransition, delay: index * 0.09 }}
@@ -73,6 +77,8 @@ function EducationNode({
 }
 
 export function EducationSection() {
+  const scrollDirection = useScrollDirection();
+
   return (
     <div className="mx-auto w-[min(1100px,92vw)]">
       <motion.div
@@ -104,7 +110,9 @@ export function EducationSection() {
       {/* Certifications hint */}
       <motion.div
         variants={springCardVariants}
+        custom={scrollDirection}
         initial="initial"
+        animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
         whileInView="animate"
         viewport={springViewport}
         className="mt-6 rounded-2xl border border-white/12 bg-white/10 p-5 text-center backdrop-blur-xl"

@@ -1,4 +1,4 @@
-import type { Variants } from "framer-motion";
+import type { TargetAndTransition } from "framer-motion";
 
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const exitEase: [number, number, number, number] = [0.55, 0, 0.45, 1];
@@ -8,7 +8,11 @@ export type PageMeta = {
   glowPrimary: string;
   glowSecondary: string;
   accentLabel: string;
-  variants: Variants;
+  variants: {
+    initial: TargetAndTransition;
+    animate: TargetAndTransition;
+    exit: TargetAndTransition;
+  };
 };
 
 /** Per-route cinematic enter + exit variants. Each page feels like a distinct scene. */

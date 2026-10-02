@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { HeroHologram } from "@/components/portfolio/hero-hologram";
 import { MagneticButton } from "@/components/portfolio/magnetic-button";
+import { springCardVariants, springTransition, springViewport, useScrollDirection } from "@/components/portfolio/spring-reveal";
 import { portfolioData } from "@/data/portfolio-data";
 
 const stagger = {
@@ -15,6 +16,8 @@ const fadeUp = {
 };
 
 export function HomeSection() {
+  const scrollDirection = useScrollDirection();
+
   const scrollToSection = (sectionId: string) => {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -63,14 +66,21 @@ export function HomeSection() {
             variants={fadeUp}
             className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4"
           >
-            {portfolioData.kpis.map((kpi) => (
-              <div
+            {portfolioData.kpis.map((kpi, index) => (
+              <motion.div
                 key={kpi.label}
+                variants={springCardVariants}
+                custom={scrollDirection}
+                initial="initial"
+                animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
+                whileInView="animate"
+                viewport={springViewport}
+                transition={{ ...springTransition, delay: index * 0.08 }}
                 className="rounded-xl border border-white/12 bg-black/30 p-3 text-center"
               >
                 <p className="text-2xl font-black text-cyan-200">{kpi.value}</p>
                 <p className="mt-1 text-[9px] tracking-[0.2em] text-cyan-100/70">{kpi.label}</p>
-              </div>
+              </motion.div>
             ))}
           </motion.div>
 

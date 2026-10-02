@@ -13,13 +13,12 @@ export function FramerProvider({ children }: { children: React.ReactNode }) {
   const meta = pageMeta[pathname] ?? pageMeta["/"];
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    <AnimatePresence mode="wait">
       <motion.div
         key={pathname}
-        variants={meta.variants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
+        initial={meta.variants.initial}
+        animate={meta.variants.animate}
+        exit={meta.variants.exit}
         style={{ perspective: "1200px" }}
         className="flex min-h-screen flex-col pb-28 pt-8"
       >

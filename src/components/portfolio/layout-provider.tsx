@@ -6,6 +6,7 @@ import { Bot, Braces, Bug, Cloud, Code2, Cpu, Database, GitBranch, Server, Shiel
 import { usePathname } from "next/navigation";
 import { type ComponentType, useEffect } from "react";
 import { CursorGlow } from "@/components/portfolio/cursor-glow";
+import { setScrollDirection } from "@/components/portfolio/spring-reveal";
 import { pageMeta, navRoutes } from "@/lib/transitions";
 import { usePortfolioStore } from "@/store/portfolio-store";
 
@@ -128,17 +129,35 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
   const booting = usePortfolioStore((s) => s.booting);
   const setBooting = usePortfolioStore((s) => s.setBooting);
   useEffect(() => {
-    const lenis = new Lenis({ duration: 1.1, smoothWheel: true, syncTouch: true });
-    let rafId = 0;
-    const raf = (t: number) => {
-      lenis.raf(t);
-      rafId = requestAnimationFrame(raf);
+    let directionAnchor = window.scrollY;
+
+    const updateScrollDirection = () => {
+      const scrollY = window.scrollY;
+      const distance = scrollY - directionAnchor;
+      if (Math.abs(distance) < 6) return;
+
+      setScrollDirection(distance > 0 ? "down" : "up");
+      directionAnchor = scrollY;
     };
-    rafId = requestAnimationFrame(raf);
+
+    window.addEventListener("scroll", updateScrollDirection, { passive: true });
+    return () => window.removeEventListener("scroll", updateScrollDirection);
+  }, []);
+
+  useEffect(() => {
+    const lenis = new Lenis({
+      smoothWheel: true,
+      syncTouch: false,
+      wheelMultiplier: 0.4,
+      lerp: 0.1,
+      anchors: true,
+      autoRaf: true,
+      autoToggle: true,
+      respectReducedMotion: true,
+    });
     const timer = window.setTimeout(() => setBooting(false), 2400);
     return () => {
       clearTimeout(timer);
-      cancelAnimationFrame(rafId);
       lenis.destroy();
     };
   }, [setBooting]);

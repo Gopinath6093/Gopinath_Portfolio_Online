@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { springCardVariants, springTransition, springViewport } from "@/components/portfolio/spring-reveal";
+import { springCardVariants, springTransition, springViewport, useScrollDirection } from "@/components/portfolio/spring-reveal";
 import { portfolioData } from "@/data/portfolio-data";
 
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -22,16 +22,20 @@ function ExperienceCard({
   exp: (typeof portfolioData.experience)[0];
   index: number;
 }) {
+  const scrollDirection = useScrollDirection();
+
   return (
     <motion.article
       variants={springCardVariants}
+      custom={scrollDirection}
       initial="initial"
+      animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
       whileInView="animate"
       viewport={springViewport}
       transition={{ ...springTransition, delay: index * 0.09 }}
       whileHover={{ y: -3, boxShadow: "0 16px 50px rgba(110,68,255,0.14)" }}
       style={{ perspective: 1000 }}
-      className="relative overflow-hidden rounded-[1.8rem] border border-cyan-200/20 bg-black/40 p-6 backdrop-blur-xl transition-all"
+      className="relative overflow-hidden rounded-[1.8rem] border border-cyan-200/20 bg-black/40 p-6 backdrop-blur-xl"
     >
       {/* Accent bar */}
       <div className="absolute left-0 top-0 h-full w-1 rounded-l-[1.8rem] bg-gradient-to-b from-cyan-400 via-fuchsia-500 to-transparent opacity-70" />
@@ -53,7 +57,9 @@ function ExperienceCard({
           <motion.li
             key={h}
             variants={springCardVariants}
+            custom={scrollDirection}
             initial="initial"
+            animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
             whileInView="animate"
             viewport={springViewport}
             transition={{ ...springTransition, delay: 0.12 + i * 0.07 }}
@@ -69,6 +75,8 @@ function ExperienceCard({
 }
 
 export function ExperienceSection() {
+  const scrollDirection = useScrollDirection();
+
   return (
     <div className="mx-auto w-[min(1100px,92vw)]">
       <motion.div
@@ -103,7 +111,9 @@ export function ExperienceSection() {
           <motion.article
             key={t.author}
             variants={springCardVariants}
+            custom={scrollDirection}
             initial="initial"
+            animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
             whileInView="animate"
             viewport={springViewport}
             transition={{ ...springTransition, delay: i * 0.08 }}

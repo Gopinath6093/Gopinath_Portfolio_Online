@@ -2,7 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { springCardVariants, springTransition, springViewport } from "@/components/portfolio/spring-reveal";
+import { springCardVariants, springTransition, springViewport, useScrollDirection } from "@/components/portfolio/spring-reveal";
 import { portfolioData } from "@/data/portfolio-data";
 
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -26,13 +26,14 @@ const timelineEvents = [
 
 function TimelineNode({ year, event, index }: { year: string; event: string; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
+  const inView = useInView(ref, { once: false, margin: "-60px" });
+  const scrollDirection = useScrollDirection();
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, x: -50, scale: 0.9 }}
-      animate={inView ? { opacity: 1, x: 0, scale: 1 } : {}}
+      initial={{ opacity: 0, x: scrollDirection === "up" ? 50 : -50, scale: 0.9 }}
+      animate={inView ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: scrollDirection === "up" ? 50 : -50, scale: 0.9 }}
       transition={{ ...springTransition, delay: index * 0.08 }}
       className="relative flex gap-4"
     >
@@ -56,6 +57,7 @@ function TimelineNode({ year, event, index }: { year: string; event: string; ind
 
 export function AboutSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const scrollDirection = useScrollDirection();
 
   return (
     <div className="mx-auto w-[min(1100px,92vw)]">
@@ -87,6 +89,8 @@ export function AboutSection() {
       >
         <motion.article
           variants={springCardVariants}
+          custom={scrollDirection}
+          animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
           whileInView="animate"
           viewport={springViewport}
           className="rounded-[1.8rem] border border-cyan-300/20 bg-white/10 p-7 backdrop-blur-xl"
@@ -106,6 +110,8 @@ export function AboutSection() {
 
         <motion.article
           variants={springCardVariants}
+          custom={scrollDirection}
+          animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
           whileInView="animate"
           viewport={springViewport}
           className="rounded-[1.8rem] border border-fuchsia-300/20 bg-white/10 p-7 backdrop-blur-xl"
@@ -134,11 +140,13 @@ export function AboutSection() {
           <motion.article
             key={p}
             variants={springCardVariants}
+            custom={scrollDirection}
+            animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
             whileInView="animate"
             viewport={springViewport}
             transition={{ ...springTransition, delay: i * 0.08 }}
             whileHover={{ y: -4, boxShadow: "0 10px 40px rgba(0,229,255,0.12)" }}
-            className="rounded-2xl border border-white/12 bg-black/40 p-5 text-sm text-cyan-50/90 transition-all"
+            className="rounded-2xl border border-white/12 bg-black/40 p-5 text-sm text-cyan-50/90"
           >
             <span className="text-xs font-bold tracking-[0.3em] text-cyan-300/70">
               {String(i + 1).padStart(2, "0")}
@@ -151,7 +159,9 @@ export function AboutSection() {
       {/* Timeline */}
       <motion.div
         variants={springCardVariants}
+        custom={scrollDirection}
         initial="initial"
+        animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
         whileInView="animate"
         viewport={springViewport}
         className="mt-10 rounded-[1.8rem] border border-white/12 bg-white/10 p-7 backdrop-blur-xl"

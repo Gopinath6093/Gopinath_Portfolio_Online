@@ -22,7 +22,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Desktop renders at the equivalent of ~115% browser zoom by default. */
 @media (min-width: 1024px) {
   body {
     zoom: 1.15;

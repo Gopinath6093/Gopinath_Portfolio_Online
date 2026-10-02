@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect } from "react";
-import { springSectionVariants } from "@/components/portfolio/spring-reveal";
+import { springSectionVariants, useScrollDirection } from "@/components/portfolio/spring-reveal";
 import { AchievementsSection } from "@/components/portfolio/sections/achievements-section";
 import { AboutSection } from "@/components/portfolio/sections/about-section";
 import { ContactSection } from "@/components/portfolio/sections/contact-section";
@@ -26,6 +26,7 @@ const sections = [
 
 export function SinglePagePortfolio() {
   const setActiveSection = usePortfolioStore((state) => state.setActiveSection);
+  const scrollDirection = useScrollDirection();
 
   useEffect(() => {
     const sectionNodes = sections
@@ -91,9 +92,11 @@ export function SinglePagePortfolio() {
           key={id}
           id={id}
           variants={springSectionVariants}
+          custom={scrollDirection}
           initial="initial"
+          animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
           whileInView="animate"
-          viewport={{ once: false, amount: 0.18 }}
+          viewport={{ once: false, amount: 0.02 }}
           style={{ perspective: 1200, transformStyle: "preserve-3d" }}
           className="relative min-h-screen scroll-mt-24 px-0 py-14 sm:py-20"
         >
