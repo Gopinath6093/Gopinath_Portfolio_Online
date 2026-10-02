@@ -84,33 +84,31 @@ function FloatingNav() {
       root.setProperty("--mobile-viewport-height", `${viewportHeight}px`);
     };
 
-    let updateFrameRequest = 0;
-    const scheduleMobileViewportUpdate = () => {
-      if (!mobileViewport.matches || updateFrameRequest) return;
-      updateFrameRequest = window.requestAnimationFrame(() => {
-        updateFrameRequest = 0;
-        updateMobileViewport();
-      });
+    const currentOrientation = () => window.innerWidth >= window.innerHeight ? "landscape" : "portrait";
+    let previousOrientation = currentOrientation();
+    const updateAfterOrientationChange = () => {
+      const nextOrientation = currentOrientation();
+      if (nextOrientation === previousOrientation) return;
+
+      previousOrientation = nextOrientation;
+      window.requestAnimationFrame(updateMobileViewport);
     };
     const updateResponsivePosition = () => {
       updatePosition();
-      scheduleMobileViewportUpdate();
+      updateAfterOrientationChange();
     };
 
     updatePosition();
     updateMobileViewport();
     window.addEventListener("resize", updateResponsivePosition);
-    window.addEventListener("orientationchange", updateResponsivePosition);
+    window.addEventListener("orientationchange", updateAfterOrientationChange);
     visualViewport?.addEventListener("resize", updateResponsivePosition);
-    visualViewport?.addEventListener("scroll", scheduleMobileViewportUpdate);
     mobileViewport.addEventListener("change", updateResponsivePosition);
 
     return () => {
-      window.cancelAnimationFrame(updateFrameRequest);
       window.removeEventListener("resize", updateResponsivePosition);
-      window.removeEventListener("orientationchange", updateResponsivePosition);
+      window.removeEventListener("orientationchange", updateAfterOrientationChange);
       visualViewport?.removeEventListener("resize", updateResponsivePosition);
-      visualViewport?.removeEventListener("scroll", scheduleMobileViewportUpdate);
       mobileViewport.removeEventListener("change", updateResponsivePosition);
     };
   }, [portalHost]);
