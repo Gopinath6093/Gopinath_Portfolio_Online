@@ -42,17 +42,18 @@ html::after {
 
 @media (pointer: coarse) and (hover: none) {
   html::after {
-    inset: auto;
-    top: var(--mobile-frame-top, 12px);
-    left: var(--mobile-frame-left, 12px);
-    width: var(--mobile-frame-width, calc(100vw - 24px));
-    height: var(--mobile-frame-height, calc(100vh - 24px));
+    inset: 12px;
     box-sizing: border-box;
     border-color: rgba(0, 229, 255, 0.6);
     z-index: 80;
   }
 
   nav[aria-label="Portfolio sections"] {
+    top: auto !important;
+    right: 20px !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 24px) !important;
+    left: 20px !important;
+    width: auto !important;
     border-radius: 14px;
   }
 

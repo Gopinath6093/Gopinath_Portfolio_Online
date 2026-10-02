@@ -53,7 +53,7 @@ function FloatingNav() {
       nav.style.top = `${visibleBottom - nav.offsetHeight - 24}px`;
     };
 
-    const updateMobileFrame = () => {
+    const updateMobileViewport = () => {
       if (!mobileViewport.matches) return;
 
       const viewportWidth = visualViewport?.width ?? document.documentElement.clientWidth;
@@ -62,30 +62,27 @@ function FloatingNav() {
       const viewportTop = visualViewport?.offsetTop ?? 0;
       const root = document.documentElement.style;
 
-      root.setProperty("--mobile-frame-left", `${viewportLeft + 12}px`);
-      root.setProperty("--mobile-frame-top", `${viewportTop + 12}px`);
-      root.setProperty("--mobile-frame-width", `${Math.max(0, viewportWidth - 24)}px`);
-      root.setProperty("--mobile-frame-height", `${Math.max(0, viewportHeight - 24)}px`);
       root.setProperty("--mobile-viewport-left", `${viewportLeft}px`);
       root.setProperty("--mobile-viewport-top", `${viewportTop}px`);
       root.setProperty("--mobile-viewport-width", `${viewportWidth}px`);
       root.setProperty("--mobile-viewport-height", `${viewportHeight}px`);
     };
 
+    if (mobileViewport.matches) {
+      updateMobileViewport();
+      const updateAfterOrientationChange = () => window.requestAnimationFrame(updateMobileViewport);
+      window.addEventListener("orientationchange", updateAfterOrientationChange);
+
+      return () => window.removeEventListener("orientationchange", updateAfterOrientationChange);
+    }
+
     updatePosition();
-    updateMobileFrame();
     window.addEventListener("resize", updatePosition);
-    window.addEventListener("resize", updateMobileFrame);
     visualViewport?.addEventListener("resize", updatePosition);
-    visualViewport?.addEventListener("resize", updateMobileFrame);
-    visualViewport?.addEventListener("scroll", updateMobileFrame);
 
     return () => {
       window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("resize", updateMobileFrame);
       visualViewport?.removeEventListener("resize", updatePosition);
-      visualViewport?.removeEventListener("resize", updateMobileFrame);
-      visualViewport?.removeEventListener("scroll", updateMobileFrame);
     };
   }, [portalHost]);
 
