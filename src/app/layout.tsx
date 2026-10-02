@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Sora } from "next/font/google";
 import { LayoutProvider } from "@/components/portfolio/layout-provider";
 import { FramerProvider } from "@/components/portfolio/framer-provider";
@@ -18,6 +18,14 @@ export const metadata: Metadata = {
   title: "Gopinath S | Futuristic Portfolio",
   description:
     "Immersive product-style portfolio with cinematic storytelling, quality engineering journey, and interactive 3D experiences.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  minimumScale: 1,
+  maximumScale: 5,
+  userScalable: true,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

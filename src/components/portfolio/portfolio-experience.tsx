@@ -21,7 +21,7 @@ const navItems = [
 ];
 
 const sectionClass =
-  "mx-auto w-[min(1100px,92vw)] rounded-[2rem] border border-white/12 bg-white/5 p-6 shadow-[0_20px_80px_rgba(0,229,255,0.08)] backdrop-blur-xl sm:p-10";
+  "mx-auto w-[min(1100px,92vw)] max-sm:w-[calc(100%_-_48px)] max-sm:max-w-[1100px] rounded-[2rem] border border-white/12 bg-white/5 p-6 shadow-[0_20px_80px_rgba(0,229,255,0.08)] backdrop-blur-xl sm:p-10";
 
 export function PortfolioExperience() {
   const setActiveSection = usePortfolioStore((state) => state.setActiveSection);
@@ -53,7 +53,7 @@ export function PortfolioExperience() {
     <div ref={containerRef} className="relative pb-32">
       <FloatingCommandNav items={navItems} />
 
-      <section id="home" className="relative mx-auto w-[min(1200px,94vw)] pt-10 sm:pt-20">
+      <section id="home" className="relative mx-auto w-[min(1200px,94vw)] max-sm:w-[calc(100%_-_48px)] max-sm:max-w-[1200px] pt-10 sm:pt-20">
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
           <motion.div
             className="reveal-card rounded-[2rem] border border-cyan-300/20 bg-white/10 p-7 backdrop-blur-xl"
@@ -249,7 +249,7 @@ export function PortfolioExperience() {
         </div>
       </section>
 
-      <section className="mx-auto mt-16 w-[min(1200px,94vw)] pb-12 text-center text-xs tracking-[0.18em] text-cyan-100/60">
+      <section className="mx-auto mt-16 w-[min(1200px,94vw)] max-sm:w-[calc(100%_-_48px)] max-sm:max-w-[1200px] pb-12 text-center text-xs tracking-[0.18em] text-cyan-100/60">
         BUILT AS AN IMMERSIVE PRODUCT EXPERIENCE | NEXT.JS + THREE.JS + FRAMER MOTION + GSAP
       </section>
     </div>

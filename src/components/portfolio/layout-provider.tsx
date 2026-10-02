@@ -4,7 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import Lenis from "lenis";
 import { Bot, Braces, Bug, Cloud, Code2, Cpu, Database, GitBranch, Server, ShieldCheck, SquareTerminal, Workflow } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { type ComponentType, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { startTransition, type ComponentType, useEffect, useRef, useState } from "react";
 import { CursorGlow } from "@/components/portfolio/cursor-glow";
 import { setScrollDirection } from "@/components/portfolio/spring-reveal";
 import { pageMeta, navRoutes } from "@/lib/transitions";
@@ -14,6 +15,79 @@ function FloatingNav() {
   const pathname = usePathname();
   const activeSection = usePortfolioStore((s) => s.activeSection);
   const setActiveSection = usePortfolioStore((s) => s.setActiveSection);
+  const navRef = useRef<HTMLElement>(null);
+  const [portalHost, setPortalHost] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const host = document.createElement("div");
+    host.dataset.portfolioNavRoot = "";
+    document.documentElement.appendChild(host);
+    startTransition(() => setPortalHost(host));
+
+    return () => host.remove();
+  }, []);
+
+  useEffect(() => {
+    const visualViewport = window.visualViewport;
+    const mobileViewport = window.matchMedia("(pointer: coarse) and (hover: none)");
+    let previousVisibleWidth = Number.NaN;
+    let previousVisibleLeft = Number.NaN;
+
+    const updatePosition = () => {
+      const visibleWidth = visualViewport?.width ?? document.documentElement.clientWidth;
+      const visibleLeft = visualViewport?.offsetLeft ?? 0;
+      if (visibleWidth === previousVisibleWidth && visibleLeft === previousVisibleLeft) return;
+
+      previousVisibleWidth = visibleWidth;
+      previousVisibleLeft = visibleLeft;
+      const navWidth = Math.min(1040, Math.max(0, visibleWidth - 40));
+      const navLeft = visibleLeft + (visibleWidth - navWidth) / 2;
+      const visibleBottom = visualViewport
+        ? visualViewport.offsetTop + visualViewport.height
+        : window.innerHeight;
+      const nav = navRef.current;
+      if (!nav) return;
+
+      nav.style.left = `${navLeft}px`;
+      nav.style.width = `${navWidth}px`;
+      nav.style.top = `${visibleBottom - nav.offsetHeight - 24}px`;
+    };
+
+    const updateMobileFrame = () => {
+      if (!mobileViewport.matches) return;
+
+      const viewportWidth = visualViewport?.width ?? document.documentElement.clientWidth;
+      const viewportHeight = visualViewport?.height ?? window.innerHeight;
+      const viewportLeft = visualViewport?.offsetLeft ?? 0;
+      const viewportTop = visualViewport?.offsetTop ?? 0;
+      const root = document.documentElement.style;
+
+      root.setProperty("--mobile-frame-left", `${viewportLeft + 12}px`);
+      root.setProperty("--mobile-frame-top", `${viewportTop + 12}px`);
+      root.setProperty("--mobile-frame-width", `${Math.max(0, viewportWidth - 24)}px`);
+      root.setProperty("--mobile-frame-height", `${Math.max(0, viewportHeight - 24)}px`);
+      root.setProperty("--mobile-viewport-left", `${viewportLeft}px`);
+      root.setProperty("--mobile-viewport-top", `${viewportTop}px`);
+      root.setProperty("--mobile-viewport-width", `${viewportWidth}px`);
+      root.setProperty("--mobile-viewport-height", `${viewportHeight}px`);
+    };
+
+    updatePosition();
+    updateMobileFrame();
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("resize", updateMobileFrame);
+    visualViewport?.addEventListener("resize", updatePosition);
+    visualViewport?.addEventListener("resize", updateMobileFrame);
+    visualViewport?.addEventListener("scroll", updateMobileFrame);
+
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("resize", updateMobileFrame);
+      visualViewport?.removeEventListener("resize", updatePosition);
+      visualViewport?.removeEventListener("resize", updateMobileFrame);
+      visualViewport?.removeEventListener("scroll", updateMobileFrame);
+    };
+  }, [portalHost]);
 
   const scrollToSection = (sectionId: string) => {
     setActiveSection(sectionId);
@@ -33,16 +107,24 @@ function FloatingNav() {
     }
   };
 
-  return (
-    <nav className="fixed bottom-4 left-1/2 z-50 w-[min(96vw,1040px)] -translate-x-1/2 rounded-full border border-white/15 bg-black/60 p-[6px] shadow-[0_18px_70px_rgba(0,0,0,0.45)] backdrop-blur-2xl">
+  if (!portalHost) return null;
+
+  return createPortal(
+    <nav
+      ref={navRef}
+      aria-label="Portfolio sections"
+      className="fixed z-50 rounded-full border border-white/15 bg-black/90 p-[6px] shadow-[0_18px_70px_rgba(0,0,0,0.45)] backdrop-blur-2xl"
+    >
       <ul className="grid grid-cols-4 gap-1 sm:grid-cols-8">
         {navRoutes.map(({ id, label }) => {
           const active = activeSection === id;
+          const compactLabel = id === "education" ? "EDU" : id === "achievements" ? "WINS" : label;
           return (
             <li key={id} className="min-w-0">
               <button
                 type="button"
                 onClick={() => scrollToSection(id)}
+                aria-label={label}
                 aria-current={active ? "true" : undefined}
                 className="relative flex w-full items-center justify-center overflow-hidden whitespace-nowrap rounded-full px-1 py-[8px] text-center text-[9px] font-semibold tracking-[0.08em] text-cyan-100/90 transition-colors hover:text-white sm:text-[10px] lg:text-[11px]"
               >
@@ -53,13 +135,17 @@ function FloatingNav() {
                     transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.7 }}
                   />
                 ) : null}
-                <span className="relative z-10">{label}</span>
+                <span className="relative z-10">
+                  <span className="sm:hidden">{compactLabel}</span>
+                  <span className="hidden sm:inline">{label}</span>
+                </span>
               </button>
             </li>
           );
         })}
       </ul>
-    </nav>
+    </nav>,
+    portalHost,
   );
 }
 
@@ -171,7 +257,8 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
         {booting ? (
           <motion.div
             className="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-black"
-              layoutId="loader-universe-title"
+            data-mobile-viewport-layer
+            layoutId="loader-universe-title"
             exit={{ opacity: 0, transition: { duration: 0.65 } }}
           >
             <motion.p
@@ -210,7 +297,7 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
         {!booting ? (
           <motion.div
             layoutId="loader-universe-title"
-            className="fixed left-1/2 top-4 z-40 -translate-x-1/2 rounded-full border border-cyan-200/15 bg-black/45 px-5 py-2 text-center text-[10px] font-semibold tracking-[0.38em] text-cyan-200/75 shadow-[0_12px_50px_rgba(0,229,255,0.12)] backdrop-blur-xl sm:text-xs"
+            className="fixed left-1/2 top-4 z-40 -translate-x-1/2 whitespace-nowrap rounded-full border border-cyan-200/15 bg-black/45 px-5 py-2 text-center text-[10px] font-semibold tracking-[0.38em] text-cyan-200/75 shadow-[0_12px_50px_rgba(0,229,255,0.12)] backdrop-blur-xl max-sm:px-3 max-sm:text-[8px] max-sm:tracking-[0.14em] sm:text-xs"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -221,8 +308,8 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
         ) : null}
       </AnimatePresence>
 
-      <FloatingNav />
       {children}
+      <FloatingNav />
     </>
   );
 }

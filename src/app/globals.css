@@ -40,6 +40,37 @@ html::after {
   animation: frame-glow 4.5s ease-in-out infinite;
 }
 
+@media (pointer: coarse) and (hover: none) {
+  html::after {
+    inset: auto;
+    top: var(--mobile-frame-top, 12px);
+    left: var(--mobile-frame-left, 12px);
+    width: var(--mobile-frame-width, calc(100vw - 24px));
+    height: var(--mobile-frame-height, calc(100vh - 24px));
+    box-sizing: border-box;
+    border-color: rgba(0, 229, 255, 0.6);
+    z-index: 80;
+  }
+
+  nav[aria-label="Portfolio sections"] {
+    border-radius: 14px;
+  }
+
+  [data-mobile-viewport-layer] {
+    inset: auto;
+    top: var(--mobile-viewport-top, 0px);
+    left: var(--mobile-viewport-left, 0px);
+    width: var(--mobile-viewport-width, 100vw);
+    height: var(--mobile-viewport-height, 100vh);
+  }
+
+  [data-mobile-viewport-layer] > p {
+    width: 100%;
+    padding-inline: 24px;
+    text-align: center;
+  }
+}
+
 @keyframes frame-glow {
   0%,
   100% {

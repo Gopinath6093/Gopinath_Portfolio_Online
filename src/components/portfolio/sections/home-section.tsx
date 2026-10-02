@@ -23,7 +23,7 @@ export function HomeSection() {
   };
 
   return (
-    <section className="relative mx-auto w-[min(1280px,94vw)] flex-1 pt-16 sm:pt-20">
+    <section className="relative mx-auto w-[min(1280px,94vw)] max-sm:w-[calc(100%_-_48px)] max-sm:max-w-[1280px] flex-1 pt-16 sm:pt-20">
       <div className="grid gap-8 lg:grid-cols-[1.22fr_0.78fr] lg:items-center xl:grid-cols-[1.28fr_0.72fr]">
         {/* Text side */}
         <motion.div

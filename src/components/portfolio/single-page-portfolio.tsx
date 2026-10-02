@@ -100,7 +100,7 @@ export function SinglePagePortfolio() {
           style={{ perspective: 1200, transformStyle: "preserve-3d" }}
           className="relative min-h-screen scroll-mt-24 px-0 py-14 sm:py-20"
         >
-          <div className="pointer-events-none absolute left-1/2 top-0 h-px w-[min(1100px,92vw)] -translate-x-1/2 bg-gradient-to-r from-transparent via-cyan-300/25 to-transparent" />
+          <div className="pointer-events-none absolute left-1/2 top-0 h-px w-[min(1100px,92vw)] max-sm:w-[calc(100%_-_48px)] max-sm:max-w-[1100px] -translate-x-1/2 bg-gradient-to-r from-transparent via-cyan-300/25 to-transparent" />
           <div className="pointer-events-none absolute right-[4vw] top-20 hidden font-mono text-[10px] tracking-[0.5em] text-cyan-100/15 lg:block">
             {String(index + 1).padStart(2, "0")}/{String(sections.length).padStart(2, "0")}
           </div>

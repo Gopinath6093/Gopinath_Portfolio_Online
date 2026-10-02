@@ -68,7 +68,7 @@ export function ContactSection() {
   };
 
   return (
-    <div className="mx-auto w-[min(1100px,92vw)]">
+    <div className="mx-auto w-[min(1100px,92vw)] max-sm:w-[calc(100%_-_48px)] max-sm:max-w-[1100px]">
       <motion.div variants={container} initial="initial" animate="animate" className="mb-10">
         <motion.p variants={item} className="text-[11px] uppercase tracking-[0.5em] text-cyan-300/80">
           07 · Contact
