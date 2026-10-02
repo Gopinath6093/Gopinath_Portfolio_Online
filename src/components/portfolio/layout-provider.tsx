@@ -148,8 +148,8 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
     const lenis = new Lenis({
       smoothWheel: true,
       syncTouch: false,
-      wheelMultiplier: 0.4,
-      lerp: 0.1,
+      wheelMultiplier: 0.85,
+      lerp: 0.075,
       anchors: true,
       autoRaf: true,
       autoToggle: true,
