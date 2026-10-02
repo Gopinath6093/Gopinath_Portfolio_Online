@@ -29,11 +29,25 @@ function FloatingNav() {
 
   useEffect(() => {
     const visualViewport = window.visualViewport;
-    const mobileViewport = window.matchMedia("(pointer: coarse) and (hover: none)");
+    const mobileViewport = window.matchMedia(
+      "(pointer: coarse) and (hover: none), (max-width: 767px), (max-width: 900px) and (max-height: 500px)",
+    );
     let previousVisibleWidth = Number.NaN;
     let previousVisibleLeft = Number.NaN;
 
     const updatePosition = () => {
+      const nav = navRef.current;
+      if (!nav) return;
+
+      if (mobileViewport.matches) {
+        nav.style.removeProperty("left");
+        nav.style.removeProperty("width");
+        nav.style.removeProperty("top");
+        previousVisibleWidth = Number.NaN;
+        previousVisibleLeft = Number.NaN;
+        return;
+      }
+
       const visibleWidth = visualViewport?.width ?? document.documentElement.clientWidth;
       const visibleLeft = visualViewport?.offsetLeft ?? 0;
       if (visibleWidth === previousVisibleWidth && visibleLeft === previousVisibleLeft) return;
@@ -45,8 +59,6 @@ function FloatingNav() {
       const visibleBottom = visualViewport
         ? visualViewport.offsetTop + visualViewport.height
         : window.innerHeight;
-      const nav = navRef.current;
-      if (!nav) return;
 
       nav.style.left = `${navLeft}px`;
       nav.style.width = `${navWidth}px`;
@@ -56,33 +68,50 @@ function FloatingNav() {
     const updateMobileViewport = () => {
       if (!mobileViewport.matches) return;
 
-      const viewportWidth = visualViewport?.width ?? document.documentElement.clientWidth;
-      const viewportHeight = visualViewport?.height ?? window.innerHeight;
       const viewportLeft = visualViewport?.offsetLeft ?? 0;
       const viewportTop = visualViewport?.offsetTop ?? 0;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
       const root = document.documentElement.style;
 
+      root.setProperty("--mobile-frame-left", "12px");
+      root.setProperty("--mobile-frame-top", "12px");
+      root.setProperty("--mobile-frame-width", `${Math.max(0, viewportWidth - 24)}px`);
+      root.setProperty("--mobile-frame-height", `${Math.max(0, viewportHeight - 24)}px`);
       root.setProperty("--mobile-viewport-left", `${viewportLeft}px`);
       root.setProperty("--mobile-viewport-top", `${viewportTop}px`);
       root.setProperty("--mobile-viewport-width", `${viewportWidth}px`);
       root.setProperty("--mobile-viewport-height", `${viewportHeight}px`);
     };
 
-    if (mobileViewport.matches) {
-      updateMobileViewport();
-      const updateAfterOrientationChange = () => window.requestAnimationFrame(updateMobileViewport);
-      window.addEventListener("orientationchange", updateAfterOrientationChange);
-
-      return () => window.removeEventListener("orientationchange", updateAfterOrientationChange);
-    }
+    let updateFrameRequest = 0;
+    const scheduleMobileViewportUpdate = () => {
+      if (!mobileViewport.matches || updateFrameRequest) return;
+      updateFrameRequest = window.requestAnimationFrame(() => {
+        updateFrameRequest = 0;
+        updateMobileViewport();
+      });
+    };
+    const updateResponsivePosition = () => {
+      updatePosition();
+      scheduleMobileViewportUpdate();
+    };
 
     updatePosition();
-    window.addEventListener("resize", updatePosition);
-    visualViewport?.addEventListener("resize", updatePosition);
+    updateMobileViewport();
+    window.addEventListener("resize", updateResponsivePosition);
+    window.addEventListener("orientationchange", updateResponsivePosition);
+    visualViewport?.addEventListener("resize", updateResponsivePosition);
+    visualViewport?.addEventListener("scroll", scheduleMobileViewportUpdate);
+    mobileViewport.addEventListener("change", updateResponsivePosition);
 
     return () => {
-      window.removeEventListener("resize", updatePosition);
-      visualViewport?.removeEventListener("resize", updatePosition);
+      window.cancelAnimationFrame(updateFrameRequest);
+      window.removeEventListener("resize", updateResponsivePosition);
+      window.removeEventListener("orientationchange", updateResponsivePosition);
+      visualViewport?.removeEventListener("resize", updateResponsivePosition);
+      visualViewport?.removeEventListener("scroll", scheduleMobileViewportUpdate);
+      mobileViewport.removeEventListener("change", updateResponsivePosition);
     };
   }, [portalHost]);
 
