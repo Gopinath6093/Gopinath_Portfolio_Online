@@ -40,9 +40,32 @@ html::after {
   animation: frame-glow 4.5s ease-in-out infinite;
 }
 
+.mobile-frame-edge-veil {
+  position: fixed;
+  inset: 0;
+  display: none;
+  pointer-events: none;
+  z-index: 69;
+  background: rgba(3, 4, 11, 0.55);
+  mask:
+    linear-gradient(#000 0 0) top / 100% 10px no-repeat,
+    linear-gradient(#000 0 0) bottom / 100% 10px no-repeat,
+    linear-gradient(#000 0 0) left / 10px 100% no-repeat,
+    linear-gradient(#000 0 0) right / 10px 100% no-repeat;
+  -webkit-mask:
+    linear-gradient(#000 0 0) top / 100% 10px no-repeat,
+    linear-gradient(#000 0 0) bottom / 100% 10px no-repeat,
+    linear-gradient(#000 0 0) left / 10px 100% no-repeat,
+    linear-gradient(#000 0 0) right / 10px 100% no-repeat;
+}
+
 @media (pointer: coarse) and (hover: none), (max-width: 767px), (max-width: 1200px) and (max-height: 500px) {
+  .mobile-frame-edge-veil {
+    display: block;
+  }
+
   nav[aria-label="Portfolio sections"] {
-    border-radius: 14px;
+    border-radius: 20px;
   }
 
   [data-mobile-viewport-layer] {
@@ -59,7 +82,11 @@ html::after {
 }
 
 html[data-mobile-frame="true"] nav[aria-label="Portfolio sections"] {
-  border-radius: 14px;
+  border-radius: 20px;
+}
+
+html[data-mobile-frame="true"] .mobile-frame-edge-veil {
+  display: block;
 }
 
 html[data-mobile-frame="true"] [data-mobile-viewport-layer] > p {

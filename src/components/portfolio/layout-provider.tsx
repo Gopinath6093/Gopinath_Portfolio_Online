@@ -270,6 +270,33 @@ function SceneGlow() {
   );
 }
 
+function MobileFrameEdgeVeil() {
+  const [portalHost, setPortalHost] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const host = document.createElement("div");
+    host.dataset.mobileFrameEdgeVeilRoot = "";
+    document.documentElement.appendChild(host);
+    startTransition(() => setPortalHost(host));
+
+    return () => host.remove();
+  }, []);
+
+  if (!portalHost) return null;
+
+  return createPortal(
+    <div
+      className="mobile-frame-edge-veil"
+      aria-hidden="true"
+      style={{
+        backdropFilter: "blur(12px) saturate(120%)",
+        WebkitBackdropFilter: "blur(12px) saturate(120%)",
+      }}
+    />,
+    portalHost,
+  );
+}
+
 export function LayoutProvider({ children }: { children: React.ReactNode }) {
   const booting = usePortfolioStore((s) => s.booting);
   const setBooting = usePortfolioStore((s) => s.setBooting);
@@ -311,6 +338,7 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
     <>
       <SceneGlow />
       <CursorGlow />
+      <MobileFrameEdgeVeil />
 
       <AnimatePresence>
         {booting ? (
@@ -321,7 +349,7 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
             exit={{ opacity: 0, transition: { duration: 0.65 } }}
           >
             <motion.p
-              className="whitespace-nowrap text-xs tracking-[0.65em] text-cyan-300 max-sm:text-[8px] max-sm:tracking-[0.14em]"
+              className="whitespace-nowrap text-xs tracking-[0.65em] text-cyan-300 max-sm:tracking-[0.14em]"
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7 }}
