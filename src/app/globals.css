@@ -70,11 +70,16 @@ html::after {
     zoom: 1;
   }
 
-  /* The document never scrolls, so the browser toolbar can't collapse and resize the viewport. */
+  /*
+   * The document never scrolls, so the browser toolbar can't collapse and resize the viewport.
+   * The 6px top/bottom offset (hidden under the 10px edge blur) is deliberate: Chrome promotes a
+   * scroller whose box exactly matches the viewport at (0, 0) to the root scroller, which brings
+   * the collapsing toolbar back. Offsetting it keeps the toolbar, border and nav stable.
+   */
   .scroll-root {
     display: block;
     position: fixed;
-    inset: 0;
+    inset: 6px 0;
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
