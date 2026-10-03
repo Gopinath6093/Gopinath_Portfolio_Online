@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useLowPerformanceDevice } from "@/lib/performance";
 
 const heroImages = [
   {
@@ -43,34 +44,66 @@ const heroImages = [
 ] as const;
 
 const slideVariants = {
-  initial: { opacity: 0, scale: 1.08, rotate: 0.6, filter: "blur(18px) saturate(0.7)" },
+  initial: { opacity: 0, scale: 1.04, rotate: 0.4, filter: "blur(8px) saturate(0.8)" },
   animate: {
     opacity: 1,
     scale: 1,
     rotate: 0,
     filter: "blur(0px) saturate(1.06)",
-    transition: { duration: 1.1, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.72, ease: [0.22, 1, 0.36, 1] },
   },
   exit: {
     opacity: 0,
-    scale: 0.98,
-    rotate: -0.4,
-    filter: "blur(14px) saturate(0.85)",
-    transition: { duration: 0.55, ease: [0.55, 0, 0.45, 1] },
+    scale: 0.99,
+    rotate: -0.3,
+    filter: "blur(6px) saturate(0.9)",
+    transition: { duration: 0.42, ease: [0.55, 0, 0.45, 1] },
   },
 } as const;
 
 export function HeroHologram() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const lowPerformanceDevice = useLowPerformanceDevice();
   const activeImage = heroImages[activeIndex];
 
   useEffect(() => {
+    if (lowPerformanceDevice) {
+      return undefined;
+    }
+
     const timer = window.setInterval(() => {
       setActiveIndex((index) => (index + 1) % heroImages.length);
-    }, 3600);
+    }, 4200);
 
     return () => window.clearInterval(timer);
-  }, []);
+  }, [lowPerformanceDevice]);
+
+  if (lowPerformanceDevice) {
+    const image = heroImages[0];
+
+    return (
+      <div className="relative h-[400px] w-full overflow-hidden rounded-[2rem] border border-cyan-200/20 bg-black/55 shadow-[0_24px_60px_rgba(0,229,255,0.12)] sm:h-[460px]">
+        <Image
+          src={image.src}
+          alt={image.caption}
+          fill
+          priority
+          sizes="(max-width: 1024px) 94vw, 38vw"
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.12),rgba(0,0,0,0.78))]" />
+        <div className="absolute inset-x-5 top-5 rounded-full border border-white/12 bg-black/45 px-4 py-3 backdrop-blur-md">
+          <span className="text-[10px] font-bold uppercase tracking-[0.34em] text-cyan-100/85">
+            {image.label}
+          </span>
+        </div>
+        <div className="absolute bottom-5 left-5 right-5 rounded-[1.2rem] border border-white/12 bg-black/50 p-4 backdrop-blur-md">
+          <p className="text-xs uppercase tracking-[0.28em] text-cyan-200/80">image.sequence.01</p>
+          <p className="mt-2 text-xl font-black text-white sm:text-2xl">{image.caption}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="group relative h-[440px] w-full overflow-hidden rounded-[2rem] border border-cyan-200/20 bg-black/55 shadow-[0_30px_100px_rgba(0,229,255,0.16)] backdrop-blur-xl sm:h-[520px]">

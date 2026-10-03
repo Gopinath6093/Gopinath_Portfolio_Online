@@ -9,6 +9,7 @@ import { startTransition, type ComponentType, useEffect, useRef, useState } from
 import { CursorGlow } from "@/components/portfolio/cursor-glow";
 import { setScrollDirection } from "@/components/portfolio/spring-reveal";
 import { MOBILE_LAYOUT_QUERY, SCROLL_ROOT_ID, getScrollY } from "@/lib/scroll-root";
+import { useLowPerformanceDevice } from "@/lib/performance";
 import { pageMeta, navRoutes } from "@/lib/transitions";
 import { usePortfolioStore } from "@/store/portfolio-store";
 
@@ -304,8 +305,19 @@ function EdgeBlurVeil() {
 export function LayoutProvider({ children }: { children: React.ReactNode }) {
   const booting = usePortfolioStore((s) => s.booting);
   const setBooting = usePortfolioStore((s) => s.setBooting);
+  const lowPerformanceDevice = useLowPerformanceDevice();
+
   useEffect(() => {
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    const scrollRoot = document.getElementById(SCROLL_ROOT_ID);
+    scrollRoot?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+
     let directionAnchor = getScrollY();
+    let rafId = 0;
 
     const updateScrollDirection = () => {
       const scrollY = getScrollY();
@@ -316,19 +328,32 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
       directionAnchor = scrollY;
     };
 
+    const requestScrollDirectionUpdate = () => {
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(() => {
+        rafId = 0;
+        updateScrollDirection();
+      });
+    };
+
     // Capture phase also receives scroll events from the mobile scroll container.
-    window.addEventListener("scroll", updateScrollDirection, { passive: true, capture: true });
-    return () => window.removeEventListener("scroll", updateScrollDirection, { capture: true });
+    window.addEventListener("scroll", requestScrollDirectionUpdate, { passive: true, capture: true });
+    return () => {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+      }
+      window.removeEventListener("scroll", requestScrollDirectionUpdate, { capture: true });
+    };
   }, []);
 
   useEffect(() => {
-    const lenis = window.matchMedia(MOBILE_LAYOUT_QUERY).matches
+    const lenis = lowPerformanceDevice || window.matchMedia(MOBILE_LAYOUT_QUERY).matches
       ? null
       : new Lenis({
           smoothWheel: true,
           syncTouch: false,
-          wheelMultiplier: 0.85,
-          lerp: 0.075,
+          wheelMultiplier: 0.8,
+          lerp: 0.08,
           anchors: true,
           autoRaf: true,
           autoToggle: true,
@@ -339,7 +364,7 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
       clearTimeout(timer);
       lenis?.destroy();
     };
-  }, [setBooting]);
+  }, [setBooting, lowPerformanceDevice]);
 
   return (
     <>

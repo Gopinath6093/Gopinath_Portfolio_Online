@@ -1,7 +1,8 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { useLowPerformanceDevice } from "@/lib/performance";
 import { pageMeta } from "@/lib/transitions";
 
 /**
@@ -11,19 +12,22 @@ import { pageMeta } from "@/lib/transitions";
 export function FramerProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const meta = pageMeta[pathname] ?? pageMeta["/"];
+  const lowPerformanceDevice = useLowPerformanceDevice();
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={pathname}
-        initial={meta.variants.initial}
-        animate={meta.variants.animate}
-        exit={meta.variants.exit}
-        style={{ perspective: "1200px" }}
-        className="flex min-h-screen flex-col pb-28 pt-8"
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <MotionConfig reducedMotion={lowPerformanceDevice ? "always" : "user"}>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={pathname}
+          initial={meta.variants.initial}
+          animate={meta.variants.animate}
+          exit={meta.variants.exit}
+          style={{ perspective: "1200px" }}
+          className="flex min-h-screen flex-col pb-28 pt-8"
+        >
+          {children}
+        </motion.div>
+      </AnimatePresence>
+    </MotionConfig>
   );
 }
