@@ -58,7 +58,29 @@ html::after {
     linear-gradient(#000 0 0) right / 10px 100% no-repeat;
 }
 
+.scroll-root {
+  display: contents;
+}
+
 @media (pointer: coarse) and (hover: none), (max-width: 767px), (max-width: 1200px) and (max-height: 500px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    zoom: 1;
+  }
+
+  /* The document never scrolls, so the browser toolbar can't collapse and resize the viewport. */
+  .scroll-root {
+    display: block;
+    position: fixed;
+    inset: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
   nav[aria-label="Portfolio sections"] {
     border-radius: 20px;
   }

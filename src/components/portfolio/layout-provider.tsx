@@ -8,6 +8,7 @@ import { createPortal } from "react-dom";
 import { startTransition, type ComponentType, useEffect, useRef, useState } from "react";
 import { CursorGlow } from "@/components/portfolio/cursor-glow";
 import { setScrollDirection } from "@/components/portfolio/spring-reveal";
+import { MOBILE_LAYOUT_QUERY, SCROLL_ROOT_ID, getScrollY } from "@/lib/scroll-root";
 import { pageMeta, navRoutes } from "@/lib/transitions";
 import { usePortfolioStore } from "@/store/portfolio-store";
 
@@ -29,9 +30,7 @@ function FloatingNav() {
 
   useEffect(() => {
     const visualViewport = window.visualViewport;
-    const mobileViewport = window.matchMedia(
-      "(pointer: coarse) and (hover: none), (max-width: 767px), (max-width: 1200px) and (max-height: 500px)",
-    );
+    const mobileViewport = window.matchMedia(MOBILE_LAYOUT_QUERY);
     const isCompactViewport = () => {
       const visibleWidth = visualViewport?.width ?? document.documentElement.clientWidth;
       const visibleHeight = visualViewport?.height ?? window.innerHeight;
@@ -306,10 +305,10 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
   const booting = usePortfolioStore((s) => s.booting);
   const setBooting = usePortfolioStore((s) => s.setBooting);
   useEffect(() => {
-    let directionAnchor = window.scrollY;
+    let directionAnchor = getScrollY();
 
     const updateScrollDirection = () => {
-      const scrollY = window.scrollY;
+      const scrollY = getScrollY();
       const distance = scrollY - directionAnchor;
       if (Math.abs(distance) < 6) return;
 
@@ -317,25 +316,28 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
       directionAnchor = scrollY;
     };
 
-    window.addEventListener("scroll", updateScrollDirection, { passive: true });
-    return () => window.removeEventListener("scroll", updateScrollDirection);
+    // Capture phase also receives scroll events from the mobile scroll container.
+    window.addEventListener("scroll", updateScrollDirection, { passive: true, capture: true });
+    return () => window.removeEventListener("scroll", updateScrollDirection, { capture: true });
   }, []);
 
   useEffect(() => {
-    const lenis = new Lenis({
-      smoothWheel: true,
-      syncTouch: false,
-      wheelMultiplier: 0.85,
-      lerp: 0.075,
-      anchors: true,
-      autoRaf: true,
-      autoToggle: true,
-      respectReducedMotion: true,
-    });
+    const lenis = window.matchMedia(MOBILE_LAYOUT_QUERY).matches
+      ? null
+      : new Lenis({
+          smoothWheel: true,
+          syncTouch: false,
+          wheelMultiplier: 0.85,
+          lerp: 0.075,
+          anchors: true,
+          autoRaf: true,
+          autoToggle: true,
+          respectReducedMotion: true,
+        });
     const timer = window.setTimeout(() => setBooting(false), 2400);
     return () => {
       clearTimeout(timer);
-      lenis.destroy();
+      lenis?.destroy();
     };
   }, [setBooting]);
 
@@ -400,7 +402,9 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
         ) : null}
       </AnimatePresence>
 
-      {children}
+      <div id={SCROLL_ROOT_ID} className="scroll-root">
+        {children}
+      </div>
       <FloatingNav />
     </>
   );

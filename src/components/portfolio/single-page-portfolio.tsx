@@ -72,13 +72,13 @@ export function SinglePagePortfolio() {
     }
 
     requestActiveSectionUpdate();
-    window.addEventListener("scroll", requestActiveSectionUpdate, { passive: true });
+    window.addEventListener("scroll", requestActiveSectionUpdate, { passive: true, capture: true });
     window.addEventListener("resize", requestActiveSectionUpdate);
     window.addEventListener("hashchange", requestActiveSectionUpdate);
 
     return () => {
       window.cancelAnimationFrame(rafId);
-      window.removeEventListener("scroll", requestActiveSectionUpdate);
+      window.removeEventListener("scroll", requestActiveSectionUpdate, { capture: true });
       window.removeEventListener("resize", requestActiveSectionUpdate);
       window.removeEventListener("hashchange", requestActiveSectionUpdate);
     };
