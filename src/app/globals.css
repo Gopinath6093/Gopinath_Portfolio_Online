@@ -40,24 +40,10 @@ html::after {
   animation: frame-glow 4.5s ease-in-out infinite;
 }
 
-.mobile-viewport-frame,
-.mobile-frame-edge-veil {
+.edge-blur-veil {
   position: fixed;
-  pointer-events: none;
-}
-
-.mobile-viewport-frame {
-  inset: 10px;
-  display: none;
-  border: 1px solid rgba(0, 229, 255, 0.35);
-  border-radius: 28px;
-  z-index: 70;
-  animation: frame-glow 4.5s ease-in-out infinite;
-}
-
-.mobile-frame-edge-veil {
   inset: 0;
-  display: block;
+  pointer-events: none;
   z-index: 69;
   background: rgba(3, 4, 11, 0.55);
   mask:
@@ -70,10 +56,6 @@ html::after {
     linear-gradient(#000 0 0) bottom / 100% 10px no-repeat,
     linear-gradient(#000 0 0) left / 10px 100% no-repeat,
     linear-gradient(#000 0 0) right / 10px 100% no-repeat;
-}
-
-html[data-mobile-frame="true"]::after {
-  content: none;
 }
 
 @media (pointer: coarse) and (hover: none), (max-width: 767px), (max-width: 1200px) and (max-height: 500px) {
@@ -96,11 +78,6 @@ html[data-mobile-frame="true"]::after {
 
 html[data-mobile-frame="true"] nav[aria-label="Portfolio sections"] {
   border-radius: 20px;
-}
-
-html[data-mobile-frame="true"] .mobile-viewport-frame,
-html[data-mobile-frame="true"] .mobile-frame-edge-veil {
-  display: block;
 }
 
 html[data-mobile-frame="true"] [data-mobile-viewport-layer] > p {

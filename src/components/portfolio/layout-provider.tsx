@@ -50,13 +50,12 @@ function FloatingNav() {
       nav.dataset.compactViewport = String(visibleWidth < 640);
 
       if (compactViewport) {
-          const visibleBottom = visualViewport
-            ? visualViewport.offsetTop + visualViewport.height
-            : window.innerHeight;
-
-          nav.style.left = `${visibleLeft + 20}px`;
-          nav.style.width = `${Math.max(0, visibleWidth - 40)}px`;
-          nav.style.top = `${visibleBottom - nav.offsetHeight - 20}px`;
+          // Anchored natively to the bottom so it follows the browser toolbar without waiting on JS.
+          nav.style.left = "20px";
+          nav.style.right = "20px";
+          nav.style.width = "auto";
+          nav.style.top = "auto";
+          nav.style.bottom = "20px";
           previousVisibleWidth = Number.NaN;
           previousVisibleLeft = Number.NaN;
           return;
@@ -73,7 +72,9 @@ function FloatingNav() {
         : window.innerHeight;
 
       nav.style.left = `${navLeft}px`;
+      nav.style.right = "auto";
       nav.style.width = `${navWidth}px`;
+      nav.style.bottom = "auto";
       nav.style.top = `${visibleBottom - nav.offsetHeight - 24}px`;
     };
 
@@ -274,163 +275,29 @@ function SceneGlow() {
   );
 }
 
-function MobileViewportFrame() {
+function EdgeBlurVeil() {
   const [portalHost, setPortalHost] = useState<HTMLElement | null>(null);
-  const frameRef = useRef<HTMLDivElement>(null);
-  const veilRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const host = document.createElement("div");
-    host.dataset.mobileViewportFrameRoot = "";
+    host.dataset.edgeBlurVeilRoot = "";
     document.documentElement.appendChild(host);
     startTransition(() => setPortalHost(host));
 
     return () => host.remove();
   }, []);
 
-  useEffect(() => {
-    if (!portalHost) return;
-
-    const visualViewport = window.visualViewport;
-    const mobileViewport = window.matchMedia(
-      "(pointer: coarse) and (hover: none), (max-width: 767px), (max-width: 1200px) and (max-height: 500px)",
-    );
-    const frameInset = 10;
-    let updateRequest = 0;
-    let trackingRequest = 0;
-    let trackUntil = 0;
-
-    const isCompactViewport = () => {
-      const visibleWidth = visualViewport?.width ?? document.documentElement.clientWidth;
-      const visibleHeight = visualViewport?.height ?? window.innerHeight;
-      return mobileViewport.matches || visibleWidth < 768 || (visibleWidth <= 1200 && visibleHeight <= 500);
-    };
-
-    const updateViewportFrame = () => {
-      const compactViewport = isCompactViewport();
-      const root = document.documentElement;
-      const frame = frameRef.current;
-      const veil = veilRef.current;
-
-      root.dataset.mobileFrame = String(compactViewport);
-
-      if (!frame || !veil) return;
-
-      if (!compactViewport) {
-        frame.style.display = "";
-        frame.style.left = "";
-        frame.style.top = "";
-        frame.style.width = "";
-        frame.style.height = "";
-
-        veil.style.display = "";
-        veil.style.left = "";
-        veil.style.top = "";
-        veil.style.width = "";
-        veil.style.height = "";
-        return;
-      }
-
-      const viewportLeft = visualViewport?.offsetLeft ?? 0;
-      const viewportTop = visualViewport?.offsetTop ?? 0;
-      const viewportWidth = visualViewport?.width ?? document.documentElement.clientWidth;
-      const viewportHeight = visualViewport?.height ?? window.innerHeight;
-      const frameWidth = Math.max(0, viewportWidth - frameInset * 2);
-      const frameHeight = Math.max(0, viewportHeight - frameInset * 2);
-
-      frame.style.display = "block";
-      frame.style.left = `${viewportLeft + frameInset}px`;
-      frame.style.top = `${viewportTop + frameInset}px`;
-      frame.style.width = `${frameWidth}px`;
-      frame.style.height = `${frameHeight}px`;
-
-      veil.style.display = "block";
-      veil.style.left = `${viewportLeft}px`;
-      veil.style.top = `${viewportTop}px`;
-      veil.style.width = `${viewportWidth}px`;
-      veil.style.height = `${viewportHeight}px`;
-    };
-
-    const scheduleViewportFrameUpdate = () => {
-      if (updateRequest) return;
-      updateRequest = window.requestAnimationFrame(() => {
-        updateRequest = 0;
-        updateViewportFrame();
-      });
-    };
-
-    const trackToolbarAnimation = () => {
-      trackUntil = performance.now() + 900;
-      if (trackingRequest) return;
-
-      const trackFrame = () => {
-        updateViewportFrame();
-
-        if (performance.now() < trackUntil) {
-          trackingRequest = window.requestAnimationFrame(trackFrame);
-          return;
-        }
-
-        trackingRequest = 0;
-      };
-
-      trackingRequest = window.requestAnimationFrame(trackFrame);
-    };
-
-    const updateDuringTouch = () => {
-      updateViewportFrame();
-      trackToolbarAnimation();
-    };
-
-    const updateOnVisibilityChange = () => {
-      if (document.visibilityState === "hidden") return;
-      updateDuringTouch();
-    };
-
-    updateViewportFrame();
-    window.setTimeout(updateViewportFrame, 250);
-    window.setTimeout(updateViewportFrame, 750);
-
-    window.addEventListener("resize", updateDuringTouch);
-    window.addEventListener("scroll", scheduleViewportFrameUpdate, { passive: true });
-    window.addEventListener("touchstart", updateDuringTouch, { passive: true });
-    window.addEventListener("touchmove", updateDuringTouch, { passive: true });
-    window.addEventListener("orientationchange", updateDuringTouch);
-    document.addEventListener("visibilitychange", updateOnVisibilityChange);
-    visualViewport?.addEventListener("resize", updateDuringTouch);
-    visualViewport?.addEventListener("scroll", updateDuringTouch);
-    mobileViewport.addEventListener("change", updateDuringTouch);
-
-    return () => {
-      window.cancelAnimationFrame(updateRequest);
-      window.cancelAnimationFrame(trackingRequest);
-      window.removeEventListener("resize", updateDuringTouch);
-      window.removeEventListener("scroll", scheduleViewportFrameUpdate);
-      window.removeEventListener("touchstart", updateDuringTouch);
-      window.removeEventListener("touchmove", updateDuringTouch);
-      window.removeEventListener("orientationchange", updateDuringTouch);
-      document.removeEventListener("visibilitychange", updateOnVisibilityChange);
-      visualViewport?.removeEventListener("resize", updateDuringTouch);
-      visualViewport?.removeEventListener("scroll", updateDuringTouch);
-      mobileViewport.removeEventListener("change", updateDuringTouch);
-    };
-  }, [portalHost]);
-
   if (!portalHost) return null;
 
   return createPortal(
-    <>
-      <div
-        ref={veilRef}
-        className="mobile-frame-edge-veil"
-        aria-hidden="true"
-        style={{
-          backdropFilter: "blur(12px) saturate(120%)",
-          WebkitBackdropFilter: "blur(12px) saturate(120%)",
-        }}
-      />
-      <div ref={frameRef} className="mobile-viewport-frame" aria-hidden="true" />
-    </>,
+    <div
+      className="edge-blur-veil"
+      aria-hidden="true"
+      style={{
+        backdropFilter: "blur(12px) saturate(120%)",
+        WebkitBackdropFilter: "blur(12px) saturate(120%)",
+      }}
+    />,
     portalHost,
   );
 }
@@ -476,7 +343,7 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
     <>
       <SceneGlow />
       <CursorGlow />
-      <MobileViewportFrame />
+      <EdgeBlurVeil />
 
       <AnimatePresence>
         {booting ? (
