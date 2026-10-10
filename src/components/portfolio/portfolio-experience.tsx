@@ -21,7 +21,7 @@ const navItems = [
 ];
 
 const sectionClass =
-  "mx-auto w-[min(1100px,92vw)] max-sm:w-[calc(100%_-_48px)] max-sm:max-w-[1100px] rounded-[2rem] border border-white/12 bg-white/5 p-6 shadow-[0_20px_80px_rgba(0,229,255,0.08)] backdrop-blur-xl sm:p-10";
+  "mx-auto w-[min(1100px,92vw)] max-sm:w-[calc(100%_-_48px)] max-sm:max-w-[1100px] rounded-[2rem] border border-white/12 bg-white/5 p-6 shadow-[0_20px_80px_rgba(229,9,20,0.08)] backdrop-blur-xl sm:p-10";
 
 export function PortfolioExperience() {
   const setActiveSection = usePortfolioStore((state) => state.setActiveSection);

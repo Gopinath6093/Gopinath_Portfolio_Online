@@ -97,7 +97,7 @@ export function ContactSection() {
               viewport={springViewport}
               transition={{ ...springTransition, delay: i * 0.07 }}
               whileHover={{ y: -2, x: 4 }}
-              className="rounded-2xl border border-white/12 bg-white/10 p-4 backdrop-blur-xl"
+              className="rounded-2xl border border-cyan-300/20 bg-white/10 p-4 backdrop-blur-xl"
             >
               <p className="text-[10px] font-bold tracking-[0.4em] text-cyan-300/80">{label}</p>
               {href ? (
@@ -135,7 +135,7 @@ export function ContactSection() {
           whileInView="animate"
           viewport={springViewport}
           style={{ perspective: 1000 }}
-          className="rounded-[1.8rem] border border-fuchsia-300/20 bg-white/10 p-7 backdrop-blur-xl"
+          className="rounded-[1.8rem] border border-cyan-300/20 bg-white/10 p-7 backdrop-blur-xl"
         >
           <h2 className="text-lg font-bold text-white">Send Signal</h2>
           <p className="mt-1 text-sm text-cyan-100/65">

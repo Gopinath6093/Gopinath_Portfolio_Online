@@ -40,7 +40,7 @@ function TimelineNode({ year, event, index }: { year: string; event: string; ind
       <div className="flex flex-col items-center">
         <motion.div
           className="mt-1 h-3 w-3 flex-none rounded-full border-2 border-cyan-300 bg-black"
-          animate={inView ? { boxShadow: "0 0 10px 2px rgba(0,229,255,0.6)" } : {}}
+          animate={inView ? { boxShadow: "0 0 10px 2px rgba(229,9,20,0.6)" } : {}}
           transition={{ delay: index * 0.07 + 0.3 }}
         />
         {index < timelineEvents.length - 1 && (
@@ -114,7 +114,7 @@ export function AboutSection() {
           animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
           whileInView="animate"
           viewport={springViewport}
-          className="rounded-[1.8rem] border border-fuchsia-300/20 bg-white/10 p-7 backdrop-blur-xl"
+          className="rounded-[1.8rem] border border-cyan-300/20 bg-white/10 p-7 backdrop-blur-xl"
         >
           <h2 className="text-xl font-bold text-white">My Vision</h2>
           <p className="mt-4 text-sm leading-relaxed text-cyan-100/80">
@@ -145,8 +145,8 @@ export function AboutSection() {
             whileInView="animate"
             viewport={springViewport}
             transition={{ ...springTransition, delay: i * 0.08 }}
-            whileHover={{ y: -4, boxShadow: "0 10px 40px rgba(0,229,255,0.12)" }}
-            className="rounded-2xl border border-white/12 bg-black/40 p-5 text-sm text-cyan-50/90"
+            whileHover={{ y: -4, boxShadow: "0 10px 40px rgba(229,9,20,0.12)" }}
+            className="rounded-2xl border border-cyan-300/20 bg-black/40 p-5 text-sm text-cyan-50/90"
           >
             <span className="text-xs font-bold tracking-[0.3em] text-cyan-300/70">
               {String(i + 1).padStart(2, "0")}
@@ -164,7 +164,7 @@ export function AboutSection() {
         animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
         whileInView="animate"
         viewport={springViewport}
-        className="mt-10 rounded-[1.8rem] border border-white/12 bg-white/10 p-7 backdrop-blur-xl"
+        className="mt-10 rounded-[1.8rem] border border-cyan-300/20 bg-white/10 p-7 backdrop-blur-xl"
       >
         <h2 className="mb-6 text-xl font-bold text-white">Career Timeline</h2>
         <div ref={sectionRef}>

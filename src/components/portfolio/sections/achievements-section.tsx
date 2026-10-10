@@ -83,7 +83,7 @@ export function AchievementsSection() {
             transition={{ ...springTransition, delay: i * 0.08 }}
             whileHover={{ y: -5, boxShadow: "0 20px 60px rgba(255,200,50,0.12)" }}
             style={{ perspective: 1000 }}
-            className="rounded-[1.6rem] border border-amber-200/20 bg-gradient-to-b from-amber-400/12 to-black/20 p-5 text-center backdrop-blur-xl"
+            className="rounded-[1.6rem] border border-cyan-300/20 bg-gradient-to-b from-amber-400/12 to-black/20 p-5 text-center backdrop-blur-xl"
           >
             <p className="text-4xl font-black text-amber-200">
               <AnimatedCounter value={kpi.value} />
@@ -107,7 +107,7 @@ export function AchievementsSection() {
             transition={{ ...springTransition, delay: i * 0.08 }}
             whileHover={{ y: -3, boxShadow: "0 14px 40px rgba(255,200,50,0.1)" }}
             style={{ perspective: 1000 }}
-            className="flex items-center gap-4 rounded-2xl border border-amber-200/20 bg-gradient-to-r from-amber-400/10 to-black/20 p-5 backdrop-blur-xl"
+            className="flex items-center gap-4 rounded-2xl border border-cyan-300/20 bg-gradient-to-r from-amber-400/10 to-black/20 p-5 backdrop-blur-xl"
           >
             <motion.span
               animate={{ rotate: [0, 8, -8, 0] }}
@@ -133,7 +133,7 @@ export function AchievementsSection() {
             whileInView="animate"
             viewport={springViewport}
             transition={{ ...springTransition, delay: i * 0.08 }}
-            className="rounded-2xl border border-white/12 bg-white/10 p-5 backdrop-blur-xl"
+            className="rounded-2xl border border-cyan-300/20 bg-white/10 p-5 backdrop-blur-xl"
           >
             <p className="text-sm italic leading-relaxed text-cyan-50/85">&ldquo;{t.quote}&rdquo;</p>
             <p className="mt-3 text-xs tracking-[0.2em] text-cyan-300/80">— {t.author}</p>

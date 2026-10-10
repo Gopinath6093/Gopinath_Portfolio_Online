@@ -36,7 +36,7 @@ function ProjectCard({
       transition={{ ...springTransition, delay: index * 0.1 }}
       whileHover={{ y: -5 }}
       style={{ perspective: 1000 }}
-      className="group overflow-hidden rounded-[1.8rem] border border-white/15 bg-black/40 backdrop-blur-xl hover:border-pink-300/30"
+      className="group overflow-hidden rounded-[1.8rem] border border-cyan-300/20 bg-black/40 backdrop-blur-xl hover:border-cyan-300/45"
     >
       <div className="relative h-52 overflow-hidden">
         <Image

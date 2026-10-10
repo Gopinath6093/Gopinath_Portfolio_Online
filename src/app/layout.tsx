@@ -34,7 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${sora.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#03040b] text-white">
+      <body className="min-h-full flex flex-col bg-[#0a0a0a] text-white">
         <LayoutProvider>
           <FramerProvider>
             {children}

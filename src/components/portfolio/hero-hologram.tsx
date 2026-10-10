@@ -82,7 +82,7 @@ export function HeroHologram() {
     const image = heroImages[0];
 
     return (
-      <div className="relative h-[400px] w-full overflow-hidden rounded-[2rem] border border-cyan-200/20 bg-black/55 shadow-[0_24px_60px_rgba(0,229,255,0.12)] sm:h-[460px]">
+      <div className="relative h-[400px] w-full overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-black/55 shadow-[0_24px_60px_rgba(229,9,20,0.12)] sm:h-[460px]">
         <Image
           src={image.src}
           alt={image.caption}
@@ -106,8 +106,8 @@ export function HeroHologram() {
   }
 
   return (
-    <div className="group relative h-[440px] w-full overflow-hidden rounded-[2rem] border border-cyan-200/20 bg-black/55 shadow-[0_30px_100px_rgba(0,229,255,0.16)] backdrop-blur-xl sm:h-[520px]">
-      <div className="absolute inset-0 rounded-[2rem] bg-[linear-gradient(135deg,rgba(255,255,255,0.12),transparent_26%,rgba(0,229,255,0.08)_52%,transparent)]" />
+    <div className="group relative h-[440px] w-full overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-black/55 shadow-[0_30px_100px_rgba(229,9,20,0.16)] backdrop-blur-xl sm:h-[520px]">
+      <div className="absolute inset-0 rounded-[2rem] bg-[linear-gradient(135deg,rgba(255,255,255,0.12),transparent_26%,rgba(229,9,20,0.08)_52%,transparent)]" />
       <div className="absolute inset-[10px] overflow-hidden rounded-[1.55rem] border border-white/10 bg-black">
         <AnimatePresence mode="wait">
           <motion.div
@@ -138,7 +138,7 @@ export function HeroHologram() {
         <span className="text-[10px] font-bold uppercase tracking-[0.34em] text-cyan-100/85">
           {activeImage.label}
         </span>
-        <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_18px_rgba(0,229,255,0.9)]" />
+        <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_18px_rgba(229,9,20,0.9)]" />
       </div>
 
       <div className="absolute bottom-5 left-5 right-5 rounded-[1.2rem] border border-white/12 bg-black/50 p-4 backdrop-blur-md">

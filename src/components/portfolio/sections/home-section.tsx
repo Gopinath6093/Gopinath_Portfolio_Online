@@ -30,7 +30,7 @@ export function HomeSection() {
           variants={stagger}
           initial="initial"
           animate="animate"
-          className="min-h-[520px] rounded-[2.25rem] border border-cyan-300/20 bg-white/10 p-8 shadow-[0_30px_100px_rgba(0,229,255,0.1)] backdrop-blur-xl sm:p-10 lg:min-h-[580px]"
+          className="min-h-[520px] rounded-[2.25rem] border border-cyan-300/20 bg-white/10 p-8 shadow-[0_30px_100px_rgba(229,9,20,0.1)] backdrop-blur-xl sm:p-10 lg:min-h-[580px]"
         >
           <motion.p
             variants={fadeUp}

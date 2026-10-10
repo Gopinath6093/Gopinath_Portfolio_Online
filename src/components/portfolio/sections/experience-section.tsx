@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { FlipClockReveal } from "@/components/portfolio/flip-clock-reveal";
 import { springCardVariants, springTransition, springViewport, useScrollDirection } from "@/components/portfolio/spring-reveal";
 import { portfolioData } from "@/data/portfolio-data";
 
@@ -15,27 +16,13 @@ const item = {
   animate: { opacity: 1, y: 0, transition: { duration: 0.55, ease } },
 };
 
-function ExperienceCard({
-  exp,
-  index,
-}: {
-  exp: (typeof portfolioData.experience)[0];
-  index: number;
-}) {
+function ExperienceCard({ exp }: { exp: (typeof portfolioData.experience)[0] }) {
   const scrollDirection = useScrollDirection();
 
   return (
     <motion.article
-      variants={springCardVariants}
-      custom={scrollDirection}
-      initial="initial"
-      animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
-      whileInView="animate"
-      viewport={springViewport}
-      transition={{ ...springTransition, delay: index * 0.09 }}
-      whileHover={{ y: -3, boxShadow: "0 16px 50px rgba(110,68,255,0.14)" }}
-      style={{ perspective: 1000 }}
-      className="relative overflow-hidden rounded-[1.8rem] border border-cyan-200/20 bg-black/40 p-6 backdrop-blur-xl"
+      whileHover={{ y: -3, boxShadow: "0 16px 50px rgba(190,18,60,0.14)" }}
+      className="relative overflow-hidden rounded-[1.8rem] border border-cyan-300/20 bg-black/40 p-6 backdrop-blur-xl"
     >
       {/* Accent bar */}
       <div className="absolute left-0 top-0 h-full w-1 rounded-l-[1.8rem] bg-gradient-to-b from-cyan-400 via-fuchsia-500 to-transparent opacity-70" />
@@ -101,7 +88,9 @@ export function ExperienceSection() {
 
       <div className="space-y-5">
         {portfolioData.experience.map((exp, i) => (
-          <ExperienceCard key={`${exp.company}-${exp.role}`} exp={exp} index={i} />
+          <FlipClockReveal key={`${exp.company}-${exp.role}`} delay={i * 0.1}>
+            <ExperienceCard exp={exp} />
+          </FlipClockReveal>
         ))}
       </div>
 
@@ -117,7 +106,7 @@ export function ExperienceSection() {
             whileInView="animate"
             viewport={springViewport}
             transition={{ ...springTransition, delay: i * 0.08 }}
-            className="rounded-2xl border border-white/12 bg-white/10 p-5 backdrop-blur-xl"
+            className="rounded-2xl border border-cyan-300/20 bg-white/10 p-5 backdrop-blur-xl"
           >
             <p className="text-sm italic leading-relaxed text-cyan-50/85">&ldquo;{t.quote}&rdquo;</p>
             <p className="mt-3 text-xs tracking-[0.2em] text-cyan-300/80">— {t.author}</p>

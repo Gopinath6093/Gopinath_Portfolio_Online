@@ -34,7 +34,7 @@ function EducationNode({
       viewport={springViewport}
       transition={{ ...springTransition, delay: index * 0.09 }}
       style={{ perspective: 1000 }}
-      className="relative overflow-hidden rounded-[1.8rem] border border-blue-300/25 bg-white/10 p-7 backdrop-blur-xl"
+      className="relative overflow-hidden rounded-[1.8rem] border border-cyan-300/20 bg-white/10 p-7 backdrop-blur-xl"
     >
       {/* Glow node */}
       <motion.div
@@ -46,7 +46,7 @@ function EducationNode({
       <div className="flex items-start gap-4">
         <motion.div
           className="flex-none"
-          animate={{ boxShadow: ["0 0 8px rgba(0,120,255,0.4)", "0 0 20px rgba(0,120,255,0.7)", "0 0 8px rgba(0,120,255,0.4)"] }}
+          animate={{ boxShadow: ["0 0 8px rgba(229,9,20,0.4)", "0 0 20px rgba(229,9,20,0.7)", "0 0 8px rgba(229,9,20,0.4)"] }}
           transition={{ duration: 3, repeat: Infinity }}
         >
           <div className="flex h-12 w-12 items-center justify-center rounded-full border border-blue-300/40 bg-blue-500/20 text-sm font-black text-blue-200">
@@ -115,7 +115,7 @@ export function EducationSection() {
         animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
         whileInView="animate"
         viewport={springViewport}
-        className="mt-6 rounded-2xl border border-white/12 bg-white/10 p-5 text-center backdrop-blur-xl"
+        className="mt-6 rounded-2xl border border-cyan-300/20 bg-white/10 p-5 text-center backdrop-blur-xl"
       >
         <p className="text-[11px] uppercase tracking-[0.4em] text-cyan-300/80">
           Continuous Learning

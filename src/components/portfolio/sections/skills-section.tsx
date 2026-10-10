@@ -26,13 +26,13 @@ const domainColors: Record<string, string> = {
 };
 
 const domainBorder: Record<string, string> = {
-  Testing: "border-cyan-300/25",
-  Automation: "border-fuchsia-300/25",
-  "Quality Assurance": "border-purple-300/25",
-  Agile: "border-blue-300/25",
-  "Product Thinking": "border-pink-300/25",
-  Leadership: "border-amber-300/25",
-  "Technical Tools": "border-green-300/25",
+  Testing: "border-cyan-300/20",
+  Automation: "border-cyan-300/20",
+  "Quality Assurance": "border-cyan-300/20",
+  Agile: "border-cyan-300/20",
+  "Product Thinking": "border-cyan-300/20",
+  Leadership: "border-cyan-300/20",
+  "Technical Tools": "border-cyan-300/20",
 };
 
 function SkillCluster({
@@ -44,7 +44,7 @@ function SkillCluster({
 }) {
   const scrollDirection = useScrollDirection();
   const gradient = domainColors[cluster.domain] ?? "from-white/10 to-white/2";
-  const border = domainBorder[cluster.domain] ?? "border-white/15";
+  const border = domainBorder[cluster.domain] ?? "border-cyan-300/20";
 
   return (
     <motion.article
@@ -115,7 +115,7 @@ export function SkillsSection() {
           animate={scrollDirection === "up" ? "initialUp" : "initialDown"}
           whileInView="animate"
           viewport={springViewport}
-          className="col-span-full rounded-[1.6rem] border border-white/12 bg-gradient-to-r from-cyan-400/10 via-fuchsia-400/10 to-cyan-400/10 p-6 text-center backdrop-blur-xl"
+          className="col-span-full rounded-[1.6rem] border border-cyan-300/20 bg-gradient-to-r from-cyan-400/10 via-fuchsia-400/10 to-cyan-400/10 p-6 text-center backdrop-blur-xl"
         >
           <p className="text-sm text-cyan-50/90">
             All domains converge to deliver one outcome:{" "}

@@ -86,7 +86,7 @@ export function SinglePagePortfolio() {
 
   return (
     <main className="relative pb-32">
-      <div className="pointer-events-none fixed inset-x-0 top-0 z-20 h-28 bg-gradient-to-b from-[#03040b] via-[#03040b]/78 to-transparent" />
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-20 h-28 bg-gradient-to-b from-[#0a0a0a] via-[#0a0a0a]/78 to-transparent" />
       {sections.map(({ id, component: Component }, index) => (
         <motion.section
           key={id}

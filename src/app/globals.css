@@ -1,11 +1,47 @@
 @import "tailwindcss";
 
 :root {
-  --background: #03040b;
-  --foreground: #eff9ff;
-  --primary: #00e5ff;
-  --secondary: #6e44ff;
-  --accent: #ff4d9d;
+  --background: #0a0a0a;
+  --foreground: #f4f4f5;
+  --primary: #e50914;
+  --secondary: #be123c;
+  --accent: #ff5a64;
+}
+
+/*
+ * Palette retune: the existing cyan/fuchsia/blue utilities now resolve to one cohesive
+ * scheme (light shades = neutral silver for text and borders, mid shades = Netflix red),
+ * so every section matches the red "Void" background without touching component markup.
+ */
+@theme {
+  --color-cyan-50: #fafafa;
+  --color-cyan-100: #f4f4f5;
+  --color-cyan-200: #e4e4e7;
+  --color-cyan-300: #ff6b73;
+  --color-cyan-400: #f0343e;
+  --color-cyan-500: #e50914;
+  --color-cyan-600: #b20710;
+  --color-cyan-700: #8a050c;
+  --color-cyan-800: #5e0409;
+  --color-cyan-900: #3a0306;
+  --color-cyan-950: #1f0103;
+
+  --color-fuchsia-50: #fff1f2;
+  --color-fuchsia-100: #ffe4e6;
+  --color-fuchsia-200: #fecdd3;
+  --color-fuchsia-300: #fda4af;
+  --color-fuchsia-400: #fb7185;
+  --color-fuchsia-500: #be123c;
+  --color-fuchsia-600: #9f1239;
+  --color-fuchsia-700: #881337;
+  --color-fuchsia-800: #6b102e;
+  --color-fuchsia-900: #4c0519;
+  --color-fuchsia-950: #2c0211;
+
+  --color-blue-200: #e4e4e7;
+  --color-blue-300: #ff8a91;
+  --color-blue-400: #f0343e;
+  --color-blue-500: #e50914;
 }
 
 @theme inline {
@@ -22,7 +58,8 @@ body {
   overflow-x: hidden;
 }
 
-@media (min-width: 1024px) {
+/* Zoom scales layout but not vw units, so below 1280px the 92vw sections would overflow the viewport. */
+@media (min-width: 1280px) {
   body {
     zoom: 1.15;
   }
@@ -33,7 +70,7 @@ html::after {
   content: "";
   position: fixed;
   inset: 10px;
-  border: 1px solid rgba(0, 229, 255, 0.35);
+  border: 1px solid rgba(229,9,20, 0.35);
   border-radius: 28px;
   pointer-events: none;
   z-index: 70;
@@ -135,19 +172,19 @@ nav[aria-label="Portfolio sections"][data-compact-viewport="true"] > ul > li > b
   0%,
   100% {
     box-shadow:
-      0 0 18px rgba(0, 229, 255, 0.18),
-      inset 0 0 22px rgba(0, 229, 255, 0.1);
+      0 0 18px rgba(229,9,20, 0.18),
+      inset 0 0 22px rgba(229,9,20, 0.1);
   }
   50% {
     box-shadow:
-      0 0 34px rgba(0, 229, 255, 0.34),
-      inset 0 0 40px rgba(110, 68, 255, 0.16);
+      0 0 34px rgba(229,9,20, 0.34),
+      inset 0 0 40px rgba(190,18,60, 0.16);
   }
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 229, 255, 0.5) rgba(255, 255, 255, 0.08);
+  scrollbar-color: rgba(229,9,20, 0.5) rgba(255, 255, 255, 0.08);
 }
 
 *::-webkit-scrollbar {
@@ -164,6 +201,6 @@ nav[aria-label="Portfolio sections"][data-compact-viewport="true"] > ul > li > b
 }
 
 ::selection {
-  background: rgba(0, 229, 255, 0.3);
+  background: rgba(229,9,20, 0.3);
   color: white;
 }

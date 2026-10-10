@@ -2,15 +2,14 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Lenis from "lenis";
-import { Bot, Braces, Bug, Cloud, Code2, Cpu, Database, GitBranch, Server, ShieldCheck, SquareTerminal, Workflow } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
-import { startTransition, type ComponentType, useEffect, useRef, useState } from "react";
-import { CursorGlow } from "@/components/portfolio/cursor-glow";
+import { startTransition, useEffect, useRef, useState } from "react";
+import { VoidBackground } from "@/components/portfolio/void-background";
 import { setScrollDirection } from "@/components/portfolio/spring-reveal";
 import { MOBILE_LAYOUT_QUERY, SCROLL_ROOT_ID, getScrollY } from "@/lib/scroll-root";
 import { useLowPerformanceDevice } from "@/lib/performance";
-import { pageMeta, navRoutes } from "@/lib/transitions";
+import { navRoutes } from "@/lib/transitions";
 import { usePortfolioStore } from "@/store/portfolio-store";
 
 function FloatingNav() {
@@ -195,7 +194,7 @@ function FloatingNav() {
                 {active ? (
                   <motion.span
                     layoutId="active-orb"
-                    className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-300/35 via-white/10 to-fuchsia-400/35 shadow-[0_0_22px_rgba(0,229,255,0.28)]"
+                    className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-300/35 via-white/10 to-fuchsia-400/35 shadow-[0_0_22px_rgba(229,9,20,0.28)]"
                     transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.7 }}
                   />
                 ) : null}
@@ -210,68 +209,6 @@ function FloatingNav() {
       </ul>
     </nav>,
     portalHost,
-  );
-}
-
-function SceneGlow() {
-  const pathname = usePathname();
-  const activeSection = usePortfolioStore((s) => s.activeSection);
-  const sectionPath = activeSection === "home" ? "/" : `/${activeSection}`;
-  const meta = pageMeta[pathname === "/" ? sectionPath : pathname] ?? pageMeta["/"];
-  const floatingIcons: Array<{
-    icon: ComponentType<{ className?: string; strokeWidth?: number }>;
-    left?: string;
-    right?: string;
-    top?: string;
-    bottom?: string;
-    size: string;
-  }> = [
-    { icon: Code2, left: "3vw", top: "16vh", size: "h-9 w-9" },
-    { icon: Database, left: "12vw", top: "28vh", size: "h-8 w-8" },
-    { icon: GitBranch, left: "5vw", top: "43vh", size: "h-8 w-8" },
-    { icon: SquareTerminal, left: "14vw", top: "58vh", size: "h-10 w-10" },
-    { icon: Workflow, left: "4vw", bottom: "17vh", size: "h-9 w-9" },
-    { icon: ShieldCheck, left: "15vw", bottom: "7vh", size: "h-8 w-8" },
-    { icon: Braces, left: "8vw", bottom: "34vh", size: "h-10 w-10" },
-    { icon: Bug, left: "16vw", top: "10vh", size: "h-8 w-8" },
-    { icon: Bot, right: "5vw", top: "11vh", size: "h-10 w-10" },
-    { icon: Cpu, right: "14vw", top: "22vh", size: "h-8 w-8" },
-    { icon: Cloud, right: "4vw", top: "38vh", size: "h-9 w-9" },
-    { icon: Server, right: "15vw", top: "54vh", size: "h-9 w-9" },
-    { icon: Bug, right: "3vw", bottom: "30vh", size: "h-8 w-8" },
-    { icon: Braces, right: "13vw", bottom: "18vh", size: "h-10 w-10" },
-    { icon: Database, right: "6vw", bottom: "7vh", size: "h-8 w-8" },
-    { icon: Workflow, right: "16vw", bottom: "42vh", size: "h-9 w-9" },
-  ];
-
-  return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(0,229,255,0.14),transparent_24%),radial-gradient(circle_at_82%_18%,rgba(255,77,157,0.12),transparent_22%),radial-gradient(circle_at_78%_78%,rgba(110,68,255,0.16),transparent_28%)]" />
-      <motion.div
-        className="absolute -left-40 -top-20 h-[34rem] w-[34rem] rounded-full blur-[140px]"
-        animate={{ background: meta.glowPrimary }}
-        transition={{ duration: 1.4, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute right-0 top-1/3 h-[28rem] w-[28rem] rounded-full blur-[120px]"
-        animate={{ background: meta.glowSecondary }}
-        transition={{ duration: 1.4, ease: "easeInOut" }}
-      />
-      <div className="absolute inset-0 bg-[linear-gradient(160deg,#03030A,#070B18_40%,#020204)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px] opacity-20" />
-      {floatingIcons.map(({ icon: Icon, size, ...position }, index) => (
-        <motion.div
-          key={`${position.left ?? position.right}-${position.top ?? position.bottom}`}
-          className="absolute hidden rounded-2xl border border-cyan-100/10 bg-cyan-100/[0.025] p-4 text-cyan-100/24 shadow-[0_18px_60px_rgba(0,229,255,0.06)] backdrop-blur-sm md:block"
-          style={position}
-          animate={{ y: [-12, 14, -12], x: [0, index % 2 === 0 ? 8 : -8, 0], rotate: [-2, 2, -2], opacity: [0.2, 0.36, 0.2] }}
-          transition={{ duration: 6 + index * 0.6, repeat: Infinity, ease: "easeInOut" }}
-          aria-hidden="true"
-        >
-          <Icon className={size} strokeWidth={1.35} />
-        </motion.div>
-      ))}
-    </div>
   );
 }
 
@@ -368,8 +305,7 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <SceneGlow />
-      <CursorGlow />
+      <VoidBackground />
       <EdgeBlurVeil />
 
       <AnimatePresence>
@@ -416,7 +352,7 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
         {!booting ? (
           <motion.div
             layoutId="loader-universe-title"
-            className="fixed left-1/2 top-4 z-40 -translate-x-1/2 whitespace-nowrap rounded-full border border-cyan-200/15 bg-black/45 px-5 py-2 text-center text-[10px] font-semibold tracking-[0.38em] text-cyan-200/75 shadow-[0_12px_50px_rgba(0,229,255,0.12)] backdrop-blur-xl max-sm:px-3 max-sm:text-[8px] max-sm:tracking-[0.14em] sm:text-xs"
+            className="fixed left-1/2 top-4 z-40 -translate-x-1/2 whitespace-nowrap rounded-full border border-cyan-200/15 bg-black/45 px-5 py-2 text-center text-[10px] font-semibold tracking-[0.38em] text-cyan-200/75 shadow-[0_12px_50px_rgba(229,9,20,0.12)] backdrop-blur-xl max-sm:px-3 max-sm:text-[8px] max-sm:tracking-[0.14em] sm:text-xs"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
